@@ -1,18 +1,47 @@
+from concurrent.futures import process
 import docker
 from dotenv import dotenv_values
-
+import subprocess
 config = dotenv_values(".env")
 client = docker.from_env()
 
 # *********************** containers ***********************
 
 
-def create_container(image, name):
-    return client.containers.create(image, name=name)
+def create_app(image, name):
+
+    # create network
+    # start proxy container using traefik
+    # start image selected for user
+    # return host and port of proxy container
+
+    client.containers.run('traefik:v2.7',
+                          name='traefik',
+                          detach=True,
+                          command='--api.insecure=true --providers.docker',
+                          ports={'8080/tcp': 8080, '80/tcp': 80},
+                          volumes={'/var/run/docker.sock': {'bind': '/var/run/docker.sock', 'mode': 'rw'}
+                                   }
+                          )
+    return client.containers.run(image, name=name, detach=True, labels={
+        "traefik.http.routers.whoami.rule": "Host(`whoami.docker.localhost`)"})
 
 
-def run_container(image, name):
-    return client.containers.run(image, name=name)
+def create_container(id, count):
+    '''     change_directory = 'pwd'
+        process1 = subprocess.Popen(change_directory.split(), stdout=subprocess.PIPE)
+        print(process1.communicate()) '''
+        
+    command = 'docker-compose up -d'
+    process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
+    output, error = process.communicate()
+    return output
+
+
+def create_container2(id, count):
+    subprocess.call(['docker', 'scale', '--force', '{}={}'.format(id, count)])
+    return client.containers.run(image, name=name, detach=True, labels={
+        "traefik.http.routers.whoami.rule": "Host(`whoami.docker.localhost`)"})
 
 
 def start_container(id):
@@ -27,7 +56,7 @@ def get_container_logs(id):
     return client.containers.get(id).logs()
 
 
-def get_container_list():
+async def get_container_list():
     return client.containers.list()
 
 
@@ -109,7 +138,7 @@ def remove_all_networks():
     return client.networks.prune()
 
 
-def get_network_list():
+async def get_network_list():
     return client.networks.list()
 
 
