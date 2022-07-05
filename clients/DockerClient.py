@@ -5,44 +5,36 @@ import subprocess
 config = dotenv_values(".env")
 client = docker.from_env()
 
+
 # *********************** containers ***********************
 
 
-def create_app(image, name):
-
-    # create network
-    # start proxy container using traefik
-    # start image selected for user
-    # return host and port of proxy container
-
-    client.containers.run('traefik:v2.7',
-                          name='traefik',
-                          detach=True,
-                          command='--api.insecure=true --providers.docker',
-                          ports={'8080/tcp': 8080, '80/tcp': 80},
-                          volumes={'/var/run/docker.sock': {'bind': '/var/run/docker.sock', 'mode': 'rw'}
-                                   }
-                          )
-    return client.containers.run(image, name=name, detach=True, labels={
-        "traefik.http.routers.whoami.rule": "Host(`whoami.docker.localhost`)"})
 
 
-def create_container(id, count):
-    '''     change_directory = 'pwd'
-        process1 = subprocess.Popen(change_directory.split(), stdout=subprocess.PIPE)
-        print(process1.communicate()) '''
-        
-    command = 'docker-compose up -d'
+def create_container(name,image):
+    command = f'docker-compose -f templates/docker-compose-{name}.yml up -d'
     process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
     output, error = process.communicate()
     return output
 
 
-def create_container2(id, count):
-    subprocess.call(['docker', 'scale', '--force', '{}={}'.format(id, count)])
-    return client.containers.run(image, name=name, detach=True, labels={
-        "traefik.http.routers.whoami.rule": "Host(`whoami.docker.localhost`)"})
+"""parametros: name,qty
+    name es el nombre del container a escalar
+    dentro del docker-compose
+    y qty la cantidad"""
+def scale_container(name,count):
+    
+    command= f'docker-compose -f templates/docker-compose-{name}.yml up -d --scale whoami={count}'
+    process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
+    output, error = process.communicate()
+    return output
 
+
+
+"""
+Lists containers for a Compose project, with current status and exposed ports. By default, both running and stopped containers are shown:
+sudo docker-compose -f ~/Escritorio/crane-rest-api/templates/docker-compose-whoami.yml ps
+"""
 
 def start_container(id):
     return client.containers.get(id).start()

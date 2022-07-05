@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
 class Scale(BaseModel):
-    id: str
+    name: str
     count: int
 

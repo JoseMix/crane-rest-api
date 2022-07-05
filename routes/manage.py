@@ -31,5 +31,13 @@ async def get_network_list():
 
 @manage.post("/containers", tags=["app"], response_model=BaseApp, description="Create a new app")
 def create_app(app: BaseApp):
-    container = DockerClient.create_container(app.image, app.name)
-    return JSONResponse(content=jsonable_encoder(container.attrs))
+    container =  DockerClient.create_container(app.image, app.name)
+    """return JSONResponse(content=jsonable_encoder(container.attrs))"""
+    print(container)
+
+
+"""app.name lleva el nombreque se usa en el docker-file"""
+@manage.post("/containerscale", tags=["app"], description="Scale an app")
+def scale_app(app: Scale):
+    container =  DockerClient.scale_container(app.name, app.count)
+    print(container)
