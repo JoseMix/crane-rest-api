@@ -22,3 +22,6 @@ user-agent==0.1.10
 uvicorn==0.17.6
 websocket-client==1.3.2
 wincertstore==0.2
+PyYAML==6.0
+python-on-whales==0.47.0
+

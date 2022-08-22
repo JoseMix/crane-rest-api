@@ -1,43 +1,23 @@
-from fastapi.responses import JSONResponse
-from fastapi.encoders import jsonable_encoder
 from fastapi import APIRouter
-from clients import DockerClient
-from schemas.base_app import BaseApp
-from schemas.scale import Scale
-
-from schemas.container import Container
+from schemas.app import App
+from services.manage import get_apps, create_app, scale_app
 
 manage = APIRouter()
 
 
-@manage.post("/app", tags=["app"], response_model=BaseApp, description="Create a new app")
-def create_app(app: BaseApp):
-    container = DockerClient.create_app(app.image, app.name)
-    return JSONResponse(content=jsonable_encoder(container.attrs))
+@manage.get("/apps", tags=["app"], description="Get all apps")
+async def getApps():
+    apps = await get_apps()
+    return apps
 
 
-@manage.get("/containers",  tags=["containers"], description="Get all containers")
-async def get_container_list():
-    list = await DockerClient.get_container_list()
-    # iterate over list and return attrs of each container
-    return [container.attrs for container in list]
+@manage.post("/apps", tags=["app"], description="Create a new app")
+async def createApp(app: App):
+    new_app = await create_app(app)
+    return new_app
 
 
-@manage.get("/networks",  tags=["containers"], description="Get all containers")
-async def get_network_list():
-    list = await DockerClient.get_network_list()
-    return [network.attrs for network in list]
-
-
-@manage.post("/containers", tags=["app"], response_model=BaseApp, description="Create a new app")
-def create_app(app: BaseApp):
-    container =  DockerClient.create_container(app.image, app.name)
-    """return JSONResponse(content=jsonable_encoder(container.attrs))"""
-    print(container)
-
-
-"""app.name lleva el nombreque se usa en el docker-file"""
-@manage.post("/containerscale", tags=["app"], description="Scale an app")
-def scale_app(app: Scale):
-    container =  DockerClient.scale_container(app.name, app.count)
-    print(container)
+@manage.post("/apps/scale", tags=["app"], description="Scale an app")
+async def scaleApp(app: App):
+    current_app = await scale_app(app)
+    return current_app

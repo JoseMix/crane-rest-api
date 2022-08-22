@@ -1,1 +1,4 @@
+conda activate crane-restapi
+uvicorn app:app --reload
+
 docker run --name crane-db -e MYSQL_ROOT_PASSWORD=9ZmS353Kxf2rDd7KnHvHLmCsg -d mysql:latest

@@ -11,5 +11,10 @@ Funciones de Crane:
   - Si el contenedor tiene demasiada carga la politica de auto escalamiento.
   - Si un contenedor tiene una carga de transacciones muy baja se debera evaluar la politica de auto escalamiento.
   - Si el contenedor tiene demasiado tiempo sin ser accedido se debera evaluar la politica de reciclaje.
-  - SI el contenedor tiene una falla se debera evaluar la politica de reintento.  
-  
+  - SI el contenedor tiene una falla se debera evaluar la politica de reintento.
+
+
+  bec2527dd8373c3a17e11e482201fc411641f3e0101a910cc5e5a52247518924  
+  22b008bac0e45a7e918d211d275b69eec7914de779847af48b69fce01eebc224
+
+  pg: 9a0e750f2bfddb15ef109c0543a7cf7fc9aa7fd41f705b01d15cadc988c53184
