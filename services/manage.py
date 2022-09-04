@@ -2,6 +2,16 @@ from schemas.app import App
 from clients import DockerClient
 from services.pycompose import docker_compose_generator
 
+async def start_crane():
+    # create network
+    docker = await DockerClient.get_client("all")
+    docker.networks.create('crane-back', driver="bridge")
+
+    # start del docker compose de prometheus y alertmanager
+    docker = await DockerClient.get_client("monitoring")
+    docker.compose.up(detach=True)
+    return 'OK'
+    
 
 async def get_apps():
     docker = await DockerClient.get_client("all")
