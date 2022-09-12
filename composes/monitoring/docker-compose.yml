@@ -1,23 +1,25 @@
-version: '3.1'
+version: "3.1"
 
 networks:
   default:
-    name: 'crane-back'
+    name: "crane-back"
 
 volumes:
   prometheus_data: {}
 
 services:
   prometheus:
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     image: prom/prometheus:latest
     volumes:
       - ./prometheus/:/etc/prometheus/
       - prometheus_data:/prometheus
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
-      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/usr/share/prometheus/console_libraries"
+      - "--web.console.templates=/usr/share/prometheus/consoles"
     ports:
       - 9090:9090
     links:
@@ -34,7 +36,7 @@ services:
       - ./alertmanager/:/etc/alertmanager/
     restart: always
     command:
-      - '--config.file=/etc/alertmanager/alertmanager.yml'
-      - '--storage.path=/alertmanager'
+      - "--config.file=/etc/alertmanager/alertmanager.yml"
+      - "--storage.path=/alertmanager"
     networks:
       - default
