@@ -1,12 +1,17 @@
 from fastapi import APIRouter
 from schemas.app import App
-from services.manage import get_apps, create_app, scale_app
+from services.manage import get_apps, create_app, scale_app, start_crane
 
 manage = APIRouter()
 
 @manage.get("/apps", tags=["app"], description="Get all apps")
 async def getApps():
     apps = await get_apps()
+    return apps
+
+@manage.post("/start", tags=["app"], description="Get all apps")
+async def getApps():
+    apps = await start_crane()
     return apps
 
 @manage.post("/apps", tags=["app"], description="Create a new app")

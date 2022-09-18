@@ -1,0 +1,11 @@
+{
+    "global": {
+        "evaluation_interval": "15s",
+        "external_labels": {
+            "monitor": "crane-monitor"
+        },
+        "scrape_interval": "15s"
+    },
+    "scrape_configs": []
+}
+{"global": {"evaluation_interval": "15s", "external_labels": {"monitor": "crane-monitor"}, "scrape_interval": "15s"}, "scrape_configs": []}

@@ -1,0 +1,30 @@
+networks:
+  crane-net: {}
+  prometheus-net:
+    external: true
+services:
+  traefik-proxy:
+    command:
+    - --api.insecure=true
+    - --providers.docker
+    - --metrics.prometheus=true
+    - --metrics.prometheus.buckets=0.1,0.3,1.2,5.0
+    - --entrypoints.web.address=:80
+    - --providers.docker.constraints=Label(`a.label.name`, `test8`)
+    image: traefik:latest
+    networks:
+    - crane-net
+    - prometheus-net
+    ports:
+    - 0:80
+    - 0:8080
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+  whoami3:
+    image: traefik/whoami
+    labels:
+    - a.label.name=test8
+    - traefik.http.routers.test8.rule=Host(`test8-whoami3.docker.localhost`)
+    networks:
+    - crane-net
+version: '3'

@@ -4,6 +4,8 @@ from pathlib import Path
 
 
 async def get_client(project_name):
+
+
     if(project_name == 'all'):
         print("Getting all clients")
         return docker

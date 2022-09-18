@@ -13,6 +13,8 @@ class App(BaseModel):
     scale: Optional[int]
     image: Optional[str]
     network: Optional[str]
+    ip: Optional[str]
+    port: Optional[str]
     count: Optional[int]
     environment: Optional[str]
     status: Optional[str]
