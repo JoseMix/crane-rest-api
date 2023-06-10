@@ -1,0 +1,9 @@
+route:
+  group_by: [alertname]
+  receiver: "post-api"
+  repeat_interval: 1m
+
+receivers:
+  - name: "post-api"
+    webhook_configs:
+      - url: "http://host.docker.internal:8000/manage/apps/alert"
