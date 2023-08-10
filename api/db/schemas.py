@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from typing import Optional
 
 
-class Service(BaseModel):
+class App(BaseModel):
     id: str
     name: str
     services: list
@@ -27,7 +27,7 @@ class Service(BaseModel):
         orm_mode = True
 
 
-class ServiceCreate(Service):
+class AppCreate(App):
     name: str
     services: list
     command: Optional[str] = None
@@ -48,11 +48,11 @@ class ServiceCreate(Service):
     user_id: Optional[int] = None
 
 
-class ServiceUpdate(Service):
+class ServiceUpdate(App):
     pass
 
 
-class ServiceDelete(Service):
+class ServiceDelete(App):
     pass
 
 
@@ -75,7 +75,8 @@ class UserUpdate(UserBase):
 class User(UserBase):
     id: int
     is_active: bool
-    services: list[Service] = []
+    services: list[App] = []
+
     class Config:
         orm_mode = True
 

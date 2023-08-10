@@ -6,4 +6,4 @@ route:
 receivers:
   - name: "post-api"
     webhook_configs:
-      - url: "http://host.docker.internal:8000/manage/apps/alert"
+      - url: "http://host.docker.internal:8000/api/v1/apps/alert"

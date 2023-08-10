@@ -1,8 +1,8 @@
 {
-    "cSpell.words": [
-        "fastapi"
-    ],
-    "python.analysis.extraPaths": [
-        "./clients"
-    ]
+  "cSpell.words": ["fastapi"],
+  "python.analysis.extraPaths": ["./clients"],
+  "files.exclude": {
+    "**/__pycache__": true,
+    "sql_app.db": true
+  }
 }

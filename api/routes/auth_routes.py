@@ -2,8 +2,9 @@ import jwt
 import os
 from fastapi import Depends, APIRouter, HTTPException, Header
 from sqlalchemy.orm import Session
-from api.db import crud, models, schemas
+from api.db import models, schemas
 from api.db.database import engine, get_db
+import api.db.crud.user_crud as UserRepository
 
 models.Base.metadata.create_all(bind=engine)
 JWT_SECRET = os.getenv("JWT_SECRET") or "secret"
@@ -25,7 +26,7 @@ def decode_token(token: str, jwt_secret: str, jwt_algorithm: str):
 async def verify_jwt(Authorization: str = Header(...), db: Session = Depends(get_db)):
     payload = decode_token(Authorization, JWT_SECRET, JWT_ALGORITHM)
     user_id = payload.get("user_id")
-    db_user = crud.get_user(db, user_id)
+    db_user = UserRepository.get_by_id(db, user_id)
     if db_user is None:
         raise HTTPException(status_code=401, detail="Invalid user")
     return db_user
@@ -33,7 +34,7 @@ async def verify_jwt(Authorization: str = Header(...), db: Session = Depends(get
 
 @authRouter.post("/login", tags=["auth"], description="Login to get an authentication token")
 def login(user: schemas.UserLogin, db: Session = Depends(get_db)):
-    db_user = crud.login_user(db, user=user)
+    db_user = UserRepository.login(db, user=user)
     if db_user is None:
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
@@ -41,12 +42,12 @@ def login(user: schemas.UserLogin, db: Session = Depends(get_db)):
     payload = {"user_id": db_user.id}
     access_token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
 
-    return {"access_token":  access_token, "token_type": "bearer"}
+    return {"access_token":  access_token, "token_type": "bearer", "expires_in": JWT_EXPIRATION_TIME_MINUTES}
 
 
 @authRouter.post("/register", tags=["auth"], description="Register a new user")
 def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    db_user = crud.get_user_by_email(db, email=user.email)
+    db_user = UserRepository.get_by_email(db, email=user.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
-    return crud.create_user(db=db, user=user)
+    return UserRepository.register(db=db, user=user)

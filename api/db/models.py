@@ -13,11 +13,11 @@ class User(Base):
     username = Column(String, unique=True, index=True)
     password = Column(String)
     is_active = Column(Boolean, default=True)
-    services = relationship("Service", back_populates="user")
+    apps = relationship("App", back_populates="user")
 
 
-class Service(Base):
-    __tablename__ = "services"
+class App(Base):
+    __tablename__ = "apps"
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
@@ -38,4 +38,4 @@ class Service(Base):
     updated_at = Column(String, index=True)
     deleted_at = Column(String, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
-    user = relationship("User", back_populates="services")
+    user = relationship("User", back_populates="apps")
