@@ -50,6 +50,11 @@ async def get_apps(db, db_user, skip: int = 0, limit: int = 100):
             id=user_app.id,
             services=[container.name for container in containers],
         )
+
+        # remove null values from app
+        app = app.dict(exclude_none=True)
+
+        
         apps.append(app)
     return apps
 

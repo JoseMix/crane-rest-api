@@ -24,7 +24,7 @@ class App(BaseModel):
     user_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class AppCreate(App):
@@ -78,7 +78,7 @@ class User(UserBase):
     services: list[App] = []
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class UserLogin(BaseModel):
