@@ -1,5 +1,6 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime, func
 from sqlalchemy.orm import relationship
+
 
 from .database import Base
 
@@ -39,3 +40,16 @@ class App(Base):
     deleted_at = Column(String, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     user = relationship("User", back_populates="apps")
+
+
+class OPAConfig(Base):
+    __tablename__ = 'opa_config'
+
+    id = Column(Integer, primary_key=True)
+    threshold = Column(Integer, nullable=False)
+    policy_name = Column(String, nullable=False)
+    policy = Column(String, nullable=True)
+    created_at = Column(DateTime(timezone=True),
+                        default=func.now(), nullable=False)
+    updated_at = Column(String, nullable=True)
+    deleted_at = Column(String, nullable=True)

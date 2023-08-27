@@ -3,9 +3,9 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from api.schemas.app import App
 import api.services.crane_service as CraneService
-from api.clients.OPAClient import check_policy, create_policy
 from api.db.database import get_db
 from api.routes.auth_routes import verify_jwt
+
 appRouter = APIRouter()
 
 
@@ -67,22 +67,3 @@ async def restart(app: App, db_user=Depends(verify_jwt)):
 async def logs(app: App, db_user=Depends(verify_jwt)):
     logs = await CraneService.logs(app, db_user)
     return logs
-
-
-@appRouter.post("/opa", tags=["app"], description="Create OPA policy for an app")
-async def opa(app: App, db_user=Depends(verify_jwt)):
-    # Usar el método check_policy
-    input_data = {"user": "Alice", "action": "read", "object": "document1"}
-    check_policy(input_data)
-
-    # Usar el método create_policy
-    policy_data = {
-        "policy": {
-            "default": {
-                "allow": {
-                    "rule": {"user": "Alice", "action": "read", "object": "document1"}
-                }
-            }
-        }
-    }
-    create_policy(policy_data)

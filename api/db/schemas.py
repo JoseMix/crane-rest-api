@@ -84,3 +84,24 @@ class User(UserBase):
 class UserLogin(BaseModel):
     email: str
     password: str
+
+
+class OPAConfigBase(BaseModel):
+    threshold: int
+    policy_name: str
+    policy: str
+
+
+class OPAConfigCreate(OPAConfigBase):
+    pass
+
+
+class OPAConfigUpdate(OPAConfigBase):
+    pass
+
+
+class OPAConfigInDB(OPAConfigBase):
+    id: int
+
+    class Config:
+        from_attributes = True
