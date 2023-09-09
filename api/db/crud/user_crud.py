@@ -26,7 +26,6 @@ def register(db: Session, user: schemas.UserCreate):
         email=user.email,
         password=hashed_password,
         full_name=user.full_name,
-        is_active=user.is_active,
     )
     db.add(db_user)
     db.commit()

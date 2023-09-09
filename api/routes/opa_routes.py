@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from api.db.database import get_db
 import api.db.crud.opa_crud as OPAConfigRepository
 from api.db.schemas import OPAConfigCreate, OPAConfigUpdate, OPAConfigInDB
-from api.clients.OPAClient import test, get_policies
+from api.clients.OPAClient import test, get_policies, update_policies_file
 opaConfigRouter = APIRouter()
 
 
@@ -16,6 +16,10 @@ def create(opa_config: OPAConfigCreate, db: Session = Depends(get_db)):
 @opaConfigRouter.post("/test", response_model=OPAConfigInDB)
 def testHelper(opa_config: OPAConfigCreate, db: Session = Depends(get_db)):
     return test(db, opa_config)
+
+@opaConfigRouter.get("/testDB")
+def testDB(db: Session = Depends(get_db)):
+    return update_policies_file(db)
 
 
 @opaConfigRouter.get("/", response_model=List[OPAConfigInDB])

@@ -47,9 +47,17 @@ class OPAConfig(Base):
 
     id = Column(Integer, primary_key=True)
     threshold = Column(Integer, nullable=False)
-    policy_name = Column(String, nullable=False)
+    policy_status = Column(String, nullable=False)
     policy = Column(String, nullable=True)
     created_at = Column(DateTime(timezone=True),
                         default=func.now(), nullable=False)
     updated_at = Column(String, nullable=True)
     deleted_at = Column(String, nullable=True)
+
+class OPAStatic(Base):
+    __tablename__ = 'opa_static'
+
+    id = Column(Integer, primary_key=True)
+    package = Column(String, nullable=False)
+    default_status = Column(String, nullable=False)
+

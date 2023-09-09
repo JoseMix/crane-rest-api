@@ -58,18 +58,19 @@ class ServiceDelete(App):
 
 class UserBase(BaseModel):
     id: Optional[int]
-    full_name: Optional[str]
-    email: str
-    is_active: bool
     services: list
 
 
-class UserCreate(UserBase):
+class UserCreate(BaseModel):
+    full_name: Optional[str]
+    email: str
     password: str
+
 
 
 class UserUpdate(UserBase):
     password: str
+    is_active: bool
 
 
 class User(UserBase):
@@ -88,7 +89,7 @@ class UserLogin(BaseModel):
 
 class OPAConfigBase(BaseModel):
     threshold: int
-    policy_name: str
+    policy_status: str
     policy: str
 
 
