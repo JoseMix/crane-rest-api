@@ -1,5 +1,7 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime, func
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
+from datetime import datetime
 
 
 from .database import Base
@@ -15,6 +17,9 @@ class User(Base):
     password = Column(String)
     is_active = Column(Boolean, default=True)
     apps = relationship("App", back_populates="user")
+    created_at = Column(DateTime, default=datetime.now)
+    updated_at = Column(DateTime, onupdate=datetime.now)
+    deleted_at = Column(String, index=True)
 
 
 class App(Base):
@@ -30,13 +35,14 @@ class App(Base):
     scale = Column(Integer, index=True, default=None)
     image = Column(String, index=True)
     network = Column(String, index=True)
+    hosts = Column(String, index=True)
     ip = Column(String, index=True)
     port = Column(String, index=True)
     count = Column(Integer, index=True)
     environment = Column(String, index=True)
     status = Column(String, index=True)
-    created_at = Column(String, index=True)
-    updated_at = Column(String, index=True)
+    created_at = Column(DateTime, default=datetime.now)
+    updated_at = Column(DateTime, onupdate=datetime.now)
     deleted_at = Column(String, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     user = relationship("User", back_populates="apps")
@@ -49,10 +55,10 @@ class OPAConfig(Base):
     threshold = Column(Integer, nullable=False)
     policy_status = Column(String, nullable=False)
     policy = Column(String, nullable=True)
-    created_at = Column(DateTime(timezone=True),
-                        default=func.now(), nullable=False)
-    updated_at = Column(String, nullable=True)
+    created_at = Column(DateTime, default=datetime.now)
+    updated_at = Column(DateTime, onupdate=datetime.now)
     deleted_at = Column(String, nullable=True)
+
 
 class OPAStatic(Base):
     __tablename__ = 'opa_static'
@@ -60,4 +66,3 @@ class OPAStatic(Base):
     id = Column(Integer, primary_key=True)
     package = Column(String, nullable=False)
     default_status = Column(String, nullable=False)
-

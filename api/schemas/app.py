@@ -1,12 +1,15 @@
 from typing import Optional
 from pydantic import BaseModel
+from datetime import datetime
 
 
 class App(BaseModel):
+    id: Optional[int] = None
     name: str
     services: list
+    ports: list = None
+    hosts: list = None
     command: Optional[str] = None
-    ports: Optional[list] = None
     volumes: Optional[list] = None
     labels: Optional[list] = None
     scale: Optional[int] = None
@@ -17,7 +20,11 @@ class App(BaseModel):
     count: Optional[int] = None
     environment: Optional[str] = None
     status: Optional[str] = None
-    created_at: Optional[str] = None
-    updated_at: Optional[str] = None
-    deleted_at: Optional[str] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+    deleted_at: Optional[datetime] = None
     user_id: Optional[int] = None
+
+
+class AppDocker(App):
+    docker: Optional[dict] = None

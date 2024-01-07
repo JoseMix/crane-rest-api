@@ -11,7 +11,7 @@ appRouter = APIRouter()
 
 @appRouter.get("/", tags=["app"], description="Get all apps", response_model_exclude_none=True)
 async def get(db_user=Depends(verify_jwt), db: Session = Depends(get_db)):
-    apps = await CraneService.get_apps(db, db_user)
+    apps = await CraneService.get_all(db, db_user)
     return apps
 
 
@@ -21,49 +21,49 @@ async def create(app: App, db_user=Depends(verify_jwt), db: Session = Depends(ge
     return app
 
 
-@appRouter.patch("/", tags=["app"], description="Update an app")
-async def update(app: App, db_user=Depends(verify_jwt), db: Session = Depends(get_db)):
-    app = await CraneService.update(db, app, db_user)
+@appRouter.patch("/{app_id}", tags=["app"], description="Update an app")
+async def update(app_id: str, app: App, db_user=Depends(verify_jwt), db: Session = Depends(get_db)):
+    app = await CraneService.update(db, app_id, app, db_user)
     return app
 
 
-@appRouter.delete("/", tags=["app"], description="Delete an app")
-async def delete(app: App, db_user=Depends(verify_jwt), db: Session = Depends(get_db)):
-    app = await CraneService.delete(db, app, db_user)
+@appRouter.get("/{app_id}", tags=["app"], description="Get an app", response_model_exclude_none=True)
+async def get_app(app_id: str, db_user=Depends(verify_jwt), db: Session = Depends(get_db)):
+    app = await CraneService.get_app_by_id(db, db_user, app_id)
     return app
 
 
-@appRouter.post("/start", tags=["app"], description="Get all apps", response_model_exclude_none=True)
-async def start(db_user=Depends(verify_jwt)):
-    apps = await CraneService.start_monitoring()
-    return apps
+@appRouter.delete("/{app_id}", tags=["app"], description="Delete an app")
+async def delete(app_id: str, db_user=Depends(verify_jwt), db: Session = Depends(get_db)):
+    app = await CraneService.delete(db, app_id, db_user)
+    return app
 
 
-@appRouter.post("/scale", tags=["app"], description="Scale an app")
-async def scale(app: App, db_user=Depends(verify_jwt)):
-    current_app = await CraneService.scale(app, db_user)
-    return current_app
+@appRouter.post("/{app_id}/start", tags=["app"], description="Delete an app")
+async def start(app_id: str, db_user=Depends(verify_jwt), db: Session = Depends(get_db)):
+    app = await CraneService.start(db, app_id, db_user)
+    return app
 
 
-@appRouter.post("/alert", tags=["app"], description="Alert an app")
-async def alert(data: Dict[Any, Any]):
-    print(data)
-    return " ***************-----------  alert ----------------****************"
+@appRouter.post("/{app_id}/stop", tags=["app"], description="Stop an app")
+async def stop(app_id: int, db_user=Depends(verify_jwt), db: Session = Depends(get_db)):
+    app = await CraneService.stop(db, app_id, db_user)
+    return app
 
 
-@appRouter.post("/stop", tags=["app"], description="Stop an app")
-async def stop(app: App, db_user=Depends(verify_jwt)):
-    current_app = await CraneService.stop(app, db_user)
-    return current_app
+@appRouter.post("/{app_id}/scale", tags=["app"], description="Scale an app")
+async def scale(app_id: str, db_user=Depends(verify_jwt), db: Session = Depends(get_db)):
+    app = await CraneService.scale(db, app_id, db_user)
+    return app
 
 
-@appRouter.post("/restart", tags=["app"], description="Restart an app")
-async def restart(app: App, db_user=Depends(verify_jwt)):
-    current_app = await CraneService.restart(app, db_user)
-    return current_app
+@appRouter.post("/{app_id}/restart", tags=["app"], description="Restart an app")
+async def restart(app_id: str, db_user=Depends(verify_jwt), db: Session = Depends(get_db)):
+    app = await CraneService.restart(db, app_id, db_user)
+    return app
 
 
-@appRouter.post("/logs", tags=["app"], description="Get logs for an app")
-async def logs(app: App, db_user=Depends(verify_jwt)):
-    logs = await CraneService.logs(app, db_user)
+@appRouter.post("/{app_id}/logs", tags=["app"], description="Get logs for an app")
+async def logs(app_id: str, db_user=Depends(verify_jwt), db: Session = Depends(get_db)):
+    logs = await CraneService.logs(db, app_id, db_user)
     return logs

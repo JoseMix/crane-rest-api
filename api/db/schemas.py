@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
+from datetime import datetime
 
 
 class App(BaseModel):
@@ -13,6 +14,7 @@ class App(BaseModel):
     scale: int
     image: str
     network: str
+    hosts: list
     ip: str
     port: str
     count: int
@@ -37,15 +39,15 @@ class AppCreate(App):
     scale: Optional[int] = None
     image: Optional[str] = None
     network: Optional[str] = None
+    hosts: Optional[list] = None
     ip: Optional[str] = None
     port: Optional[str] = None
     count: Optional[int] = None
     environment: Optional[str] = None
     status: Optional[str] = None
-    created_at: Optional[str] = None
-    updated_at: Optional[str] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
     deleted_at: Optional[str] = None
-    user_id: Optional[int] = None
 
 
 class ServiceUpdate(App):
@@ -65,7 +67,6 @@ class UserCreate(BaseModel):
     full_name: Optional[str]
     email: str
     password: str
-
 
 
 class UserUpdate(UserBase):

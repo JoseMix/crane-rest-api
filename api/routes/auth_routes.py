@@ -4,13 +4,11 @@ from fastapi import Depends, APIRouter, HTTPException, Header
 from sqlalchemy.orm import Session
 from api.db import models, schemas
 from api.db.database import engine, get_db
+from api.config.constants import JWT_SECRET, JWT_ALGORITHM, JWT_EXPIRATION_TIME_MINUTES
 import api.db.crud.user_crud as UserRepository
 
 models.Base.metadata.create_all(bind=engine)
-JWT_SECRET = os.getenv("JWT_SECRET") or "secret"
-JWT_ALGORITHM = os.getenv("JWT_ALGORITHM") or "HS256"
-JWT_EXPIRATION_TIME_MINUTES = int(
-    os.getenv("JWT_EXPIRATION_TIME_MINUTES") or 15)
+
 authRouter = APIRouter()
 
 
@@ -50,4 +48,5 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = UserRepository.get_by_email(db, email=user.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
-    return UserRepository.register(db=db, user=user)
+    new_user = UserRepository.register(db=db, user=user)
+    return {"message": "User created successfully"}

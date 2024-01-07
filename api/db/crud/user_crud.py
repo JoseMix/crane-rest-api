@@ -3,9 +3,7 @@ import os
 from sqlalchemy.orm import Session
 from .. import models, schemas
 from passlib.hash import pbkdf2_sha256
-
-
-SECRET_KEY = os.getenv("SECRET_KEY")
+from api.config.constants import SECRET_KEY
 
 
 def get_all(db: Session, skip: int = 0, limit: int = 100):

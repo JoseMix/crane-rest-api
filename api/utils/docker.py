@@ -40,7 +40,7 @@ def is_docker_running():
     return False
 
 
-def validate_docker():
+def verify_docker_daemon():
     logger = logging.getLogger("api-log")
 
     if not is_docker_running():

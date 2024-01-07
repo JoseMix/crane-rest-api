@@ -12,7 +12,7 @@ services:
     - --metrics.prometheus=true
     - --metrics.prometheus.buckets=0.1,0.3,1.2,5.0
     - --entrypoints.web.address=:80
-    - --providers.docker.constraints=Label(`a.label.name`, `1-francoappv112`)
+    - --providers.docker.constraints=Label(`a.label.name`, `mydbapp22`)
     - --providers.docker.watch=true
     image: traefik:latest
     networks:
@@ -26,8 +26,8 @@ services:
   whoami:
     image: traefik/whoami
     labels:
-    - a.label.name=1-francoappv112
-    - traefik.http.routers.1-francoappv112.rule=Host(`1-francoappv112-whoami.docker.localhost`)
+    - a.label.name=mydbapp22
+    - traefik.http.routers.mydbapp22.rule=Host(`mydbapp22-whoami.docker.localhost`)
     networks:
     - crane-net
 version: '3'

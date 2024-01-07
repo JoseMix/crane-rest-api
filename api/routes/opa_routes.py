@@ -17,6 +17,7 @@ def create(opa_config: OPAConfigCreate, db: Session = Depends(get_db)):
 def testHelper(opa_config: OPAConfigCreate, db: Session = Depends(get_db)):
     return test(db, opa_config)
 
+
 @opaConfigRouter.get("/testDB")
 def testDB(db: Session = Depends(get_db)):
     return update_policies_file(db)

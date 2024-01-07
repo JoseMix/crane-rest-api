@@ -4,7 +4,8 @@ from pathlib import Path
 import subprocess
 import platform
 
-# Function to check if docker daemon is running
+TEMP_FILES_PATH = "api/files/temp"
+MONITORING_FILES_PATH = "api/files/monitoring"
 
 
 def is_docker_daemon_running():
@@ -13,8 +14,6 @@ def is_docker_daemon_running():
         return True
     except subprocess.CalledProcessError:
         return False
-
-# Function to start docker daemon
 
 
 def start_docker_daemon():
@@ -33,18 +32,21 @@ def start_docker_daemon():
     except subprocess.CalledProcessError:
         return False
 
-# Get docker client for a project
-
 
 async def get_client(project_name):
     if not is_docker_daemon_running():
         result = start_docker_daemon()
         if result != True:
             raise Exception(result)
-    if(project_name == 'all'):
+
+    if (project_name == 'all'):
         return docker
+    elif (project_name == 'monitoring'):
+        client = DockerClient(compose_files=glob(
+            f'{Path.cwd()}/{MONITORING_FILES_PATH}/*.yml')
+        )
     else:
         client = DockerClient(compose_files=glob(
-            f'{Path.cwd()}/api/files/{project_name}/*.yml')
+            f'{Path.cwd()}/{TEMP_FILES_PATH}/{project_name}/*.yml')
         )
-        return client
+    return client
