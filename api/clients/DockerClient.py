@@ -3,9 +3,8 @@ from python_on_whales import DockerClient, docker
 from pathlib import Path
 import subprocess
 import platform
+from api.config.constants import TEMP_FILES_PATH, MONITORING_FILES_PATH
 
-TEMP_FILES_PATH = "api/files/temp"
-MONITORING_FILES_PATH = "api/files/monitoring"
 
 
 def is_docker_daemon_running():
