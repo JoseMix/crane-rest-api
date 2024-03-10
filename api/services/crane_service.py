@@ -1,6 +1,7 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from typing import List
+import uuid
 import json
 import api.db.crud.app_crud as AppCrud
 from api.schemas.app import App, AppDocker
@@ -37,6 +38,8 @@ async def get_all(db, db_user, skip: int = 0, limit: int = 100):
 
 
 async def create(db: Session, app: App, db_user):
+
+    app.name = f"{app.name}-{uuid.uuid4().hex[:8]}"
     db_app = AppCrud.get_by_name(db, db_user,  app.name)
     if db_app:
         raise HTTPException(

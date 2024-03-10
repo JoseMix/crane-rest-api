@@ -1,5 +1,5 @@
-from pydantic import BaseModel
-from typing import Optional
+from pydantic import BaseModel, Json
+from typing import Optional, Any
 from datetime import datetime
 
 
@@ -89,13 +89,34 @@ class UserLogin(BaseModel):
 
 
 class OPAConfigBase(BaseModel):
+    id: Optional[int]
+    name: str
     threshold: int
     policy_status: str
     policy: str
 
 
-class OPAConfigCreate(OPAConfigBase):
-    pass
+class OPAConfigCreate(BaseModel):
+    name: str
+    threshold: int
+    policy_status: str
+    policy: str
+
+
+class OPAPolicyCreate(BaseModel):
+    policy_name: str
+    policy_content: str
+
+
+class OPAPolicyCreateData(BaseModel):
+    name: str
+    data: Any
+
+
+class OPAPolicyCheck(BaseModel):
+    policy_name: str
+    rule_name: str
+    input_data: Any
 
 
 class OPAConfigUpdate(OPAConfigBase):
@@ -104,6 +125,31 @@ class OPAConfigUpdate(OPAConfigBase):
 
 class OPAConfigInDB(OPAConfigBase):
     id: int
+
+    class Config:
+        from_attributes = True
+
+
+class Role(BaseModel):
+    id: Optional[int]
+    name: str
+
+    class Config:
+        from_attributes = True
+
+
+class RoleCreate(BaseModel):
+    name: str
+
+
+class RoleUpdate(BaseModel):
+    name: str
+
+
+class UserRole(BaseModel):
+    id: Optional[int]
+    user_id: int
+    role_id: int
 
     class Config:
         from_attributes = True

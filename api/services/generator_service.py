@@ -59,8 +59,7 @@ def docker_compose_generator(app: App):
     path = Path.cwd() / TEMP_FILES_PATH / app.name / "docker-compose.yml"
     path.parent.mkdir(parents=True, exist_ok=True)
     write_yaml(yaml_obj, path)
-    print(app_hosts)
-    
+
     return {
         "hosts": app_hosts,
         "path": path,

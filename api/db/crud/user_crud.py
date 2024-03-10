@@ -37,3 +37,27 @@ def login(db: Session, user: schemas.UserLogin):
         if pbkdf2_sha256.verify(user.password, db_user.password):
             return db_user
     return None
+
+
+def add_user(db: Session, role_id: int, user_id: int):
+    db_user_role = models.UserRole(
+        role_id=role_id,
+        user_id=user_id
+    )
+    db.add(db_user_role)
+    db.commit()
+    db.refresh(db_user_role)
+    return db_user_role
+
+
+def remove_user(db: Session, role_id: int, user_id: int):
+    db_user_role = db.query(models.UserRole).filter(
+        models.UserRole.role_id == role_id,
+        models.UserRole.user_id == user_id
+    ).first()
+    if not db_user_role:
+        return None
+
+    db.delete(db_user_role)
+    db.commit()
+    return db_user_role

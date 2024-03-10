@@ -6,9 +6,9 @@ from datetime import datetime
 class App(BaseModel):
     id: Optional[int] = None
     name: str
-    services: list
-    ports: list = None
-    hosts: list = None
+    services: Optional[list]
+    ports: Optional[list] = None
+    hosts: Optional[list] = None
     command: Optional[str] = None
     volumes: Optional[list] = None
     labels: Optional[list] = None

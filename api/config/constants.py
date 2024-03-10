@@ -1,4 +1,6 @@
 import os
+# API
+API_PREFIX = "/api"
 
 # Secret key for JWT authentication
 SECRET_KEY = os.getenv("SECRET_KEY")
@@ -26,6 +28,9 @@ PROMETHEUS_NETWORK_NAME = "prometheus-net"
 PROMETHEUS_NETWORK_DRIVER = "bridge"
 MONITORING_SERVICE_NAME = "monitoring"
 TARGET_PORT = "8080"
+
+# OPA constants
+OPA_RBAC_CONFIG_NAME = "RBAC"
 
 # Docker compose constants
 TEMP_FILES_PATH = "api/files/temp"

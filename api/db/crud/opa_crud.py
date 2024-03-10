@@ -10,6 +10,10 @@ def get_by_id(db: Session, opa_config_id: int):
     return db.query(models.OPAConfig).filter(models.OPAConfig.id == opa_config_id).first()
 
 
+def get_by_name(db: Session, opa_config_name: str):
+    return db.query(models.OPAConfig).filter(models.OPAConfig.name == opa_config_name).first()
+
+
 def create(db: Session, opa_config: schemas.OPAConfigCreate):
     db_opa_config = models.OPAConfig(**opa_config.dict())
     db.add(db_opa_config)
