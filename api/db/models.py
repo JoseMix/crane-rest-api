@@ -67,24 +67,3 @@ class App(Base):
     deleted_at = Column(String, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     user = relationship("User", back_populates="apps")
-
-
-class OPAConfig(Base):
-    __tablename__ = 'opa_config'
-
-    id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False)
-    threshold = Column(Integer, nullable=False)
-    policy_status = Column(String, nullable=False)
-    policy = Column(String, nullable=True)
-    created_at = Column(DateTime, default=datetime.now)
-    updated_at = Column(DateTime, onupdate=datetime.now)
-    deleted_at = Column(String, nullable=True)
-
-
-class OPAStatic(Base):
-    __tablename__ = 'opa_static'
-
-    id = Column(Integer, primary_key=True)
-    package = Column(String, nullable=False)
-    default_status = Column(String, nullable=False)

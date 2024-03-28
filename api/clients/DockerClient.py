@@ -3,8 +3,7 @@ from python_on_whales import DockerClient, docker
 from pathlib import Path
 import subprocess
 import platform
-from api.config.constants import TEMP_FILES_PATH, MONITORING_FILES_PATH
-
+from api.config.constants import TEMP_FILES_PATH, MONITORING_FILES_PATH, RULES_FILES_PATH
 
 
 def is_docker_daemon_running():
@@ -16,8 +15,6 @@ def is_docker_daemon_running():
 
 
 def start_docker_daemon():
-    print("Starting Docker daemon...")
-    print(platform.system())
     if platform.system() == "Linux":
         command = "service docker start"
     elif platform.system() == "Windows":
@@ -43,6 +40,10 @@ async def get_client(project_name):
     elif (project_name == 'monitoring'):
         client = DockerClient(compose_files=glob(
             f'{Path.cwd()}/{MONITORING_FILES_PATH}/*.yml')
+        )
+    elif (project_name == 'rules'):
+        client = DockerClient(compose_files=glob(
+            f'{Path.cwd()}/{RULES_FILES_PATH}/*.yml')
         )
     else:
         client = DockerClient(compose_files=glob(

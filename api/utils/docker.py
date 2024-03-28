@@ -6,7 +6,7 @@ from fastapi import FastAPI, HTTPException
 app = FastAPI()
 
 
-def is_docker_running():
+def verify_docker_daemon():
     os_type = platform.system()
 
     if os_type == "Windows":
@@ -40,16 +40,13 @@ def is_docker_running():
     return False
 
 
-def verify_docker_daemon():
+def docker_running():
     logger = logging.getLogger("api-log")
 
-    if not is_docker_running():
+    if not verify_docker_daemon():
         logger.error("Detectamos que Docker no está corriendo en este sistema")
         logger.error(
             "Por favor, inicie el servicio de Docker para que Crane funcione correctamente."
         )
         return False
     return True
-    # Descomentar para mostrar el error en la API
-    """ raise HTTPException(
-        status_code=500, detail="Docker no está corriendo.") """

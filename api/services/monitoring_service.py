@@ -44,4 +44,4 @@ async def restart_monitoring():
         return {"message": "Monitoring restarted successfully"}
     except Exception as e:
         raise HTTPException(
-            status_code=500, detail="Error restarting monitoring. Please check if the monitoring service is running")
+            status_code=500, detail=f"Error restarting monitoring. Please check if the monitoring service is running. ")

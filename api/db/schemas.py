@@ -8,7 +8,7 @@ class App(BaseModel):
     name: str
     services: list
     command: str
-    ports: list
+    ports: dict
     volumes: list
     labels: list
     scale: int
@@ -33,7 +33,7 @@ class AppCreate(App):
     name: str
     services: list
     command: Optional[str] = None
-    ports: Optional[list] = None
+    ports: Optional[dict] = None
     volumes: Optional[list] = None
     labels: Optional[list] = None
     scale: Optional[int] = None

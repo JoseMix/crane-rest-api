@@ -38,7 +38,6 @@ async def get_all(db, db_user, skip: int = 0, limit: int = 100):
 
 
 async def create(db: Session, app: App, db_user):
-
     app.name = f"{app.name}-{uuid.uuid4().hex[:8]}"
     db_app = AppCrud.get_by_name(db, db_user,  app.name)
     if db_app:
@@ -128,3 +127,12 @@ async def delete(db: Session, app_id: str, db_user):
 async def logs(db: Session, app_id: str, db_user):
     app = await get_app_with_docker(db, db_user, app_id)
     return app.docker.compose.logs()
+
+
+async def stats(db: Session, app_id: str, db_user):
+    app = await get_app_with_docker(db, db_user, app_id)
+    app_stats = app.docker.stats()
+    app_stats = [
+        service for service in app_stats if service.container_name.startswith(app.name)
+    ]
+    return app_stats

@@ -39,31 +39,36 @@ async def delete(app_id: str, db_user=Depends(verify_jwt), db: Session = Depends
     return app
 
 
-@appRouter.post("/{app_id}/start", tags=["app"], description="Delete an app")
+@appRouter.post("/{app_id}/start", tags=["app"], description="Start app")
 async def start(app_id: str, db_user=Depends(verify_jwt), db: Session = Depends(get_db)):
     app = await CraneService.start(db, app_id, db_user)
     return app
 
 
-@appRouter.post("/{app_id}/stop", tags=["app"], description="Stop an app")
+@appRouter.post("/{app_id}/stop", tags=["app"], description="Stop app")
 async def stop(app_id: int, db_user=Depends(verify_jwt), db: Session = Depends(get_db)):
     app = await CraneService.stop(db, app_id, db_user)
     return app
 
 
-@appRouter.post("/{app_id}/scale", tags=["app"], description="Scale an app")
+@appRouter.post("/{app_id}/scale", tags=["app"], description="Scale app")
 async def scale(app_id: str, db_user=Depends(verify_jwt), db: Session = Depends(get_db)):
     app = await CraneService.scale(db, app_id, db_user)
     return app
 
 
-@appRouter.post("/{app_id}/restart", tags=["app"], description="Restart an app")
+@appRouter.post("/{app_id}/restart", tags=["app"], description="Restart app")
 async def restart(app_id: str, db_user=Depends(verify_jwt), db: Session = Depends(get_db)):
     app = await CraneService.restart(db, app_id, db_user)
     return app
 
 
-@appRouter.post("/{app_id}/logs", tags=["app"], description="Get logs for an app")
+@appRouter.post("/{app_id}/logs", tags=["app"], description="Get logs for app")
 async def logs(app_id: str, db_user=Depends(verify_jwt), db: Session = Depends(get_db)):
     logs = await CraneService.logs(db, app_id, db_user)
     return logs
+
+@appRouter.post("/{app_id}/stats", tags=["app"], description="Get stats for app")
+async def stats(app_id: str, db_user=Depends(verify_jwt), db: Session = Depends(get_db)):
+    stats = await CraneService.stats(db, app_id, db_user)
+    return stats

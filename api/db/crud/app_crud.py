@@ -1,6 +1,7 @@
 import json
 from datetime import datetime
 from sqlalchemy.orm import Session
+from sqlalchemy import and_
 from .. import models, schemas
 from passlib.hash import pbkdf2_sha256
 from api.config.constants import SECRET_KEY
@@ -11,7 +12,7 @@ def get_by_name(db: Session, db_user: models.User, name: str):
 
 
 def get_by_id(db: Session, db_user: models.User, id: int):
-    return db.query(models.App).filter(models.App.id == id).filter(models.App.user_id == db_user.id).first()
+    return db.query(models.App).filter(and_(models.App.id == id, models.App.user_id == db_user.id)).first()
 
 
 def get_all(db: Session, db_user: models.User, skip: int = 0, limit: int = 100):

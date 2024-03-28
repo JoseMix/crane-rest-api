@@ -7,8 +7,8 @@ class App(BaseModel):
     id: Optional[int] = None
     name: str
     services: Optional[list]
-    ports: Optional[list] = None
-    hosts: Optional[list] = None
+    ports: Optional[str] = None
+    hosts: Optional[str] = None
     command: Optional[str] = None
     volumes: Optional[list] = None
     labels: Optional[list] = None
@@ -27,4 +27,4 @@ class App(BaseModel):
 
 
 class AppDocker(App):
-    docker: Optional[dict] = None
+    docker: Optional[list] = None

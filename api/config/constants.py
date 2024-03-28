@@ -30,9 +30,15 @@ MONITORING_SERVICE_NAME = "monitoring"
 TARGET_PORT = "8080"
 
 # OPA constants
-OPA_RBAC_CONFIG_NAME = "RBAC"
+OPA_RBAC_CONFIG_NAME = "rbac"
+OPA_RBAC_CONFIG_FILE = "api/files/rules/policies/rbac.rego"
+OPA_SERVER_URL = "http://localhost:8181"
+OPA_RBAC_RULE_NAME = "allow"
+RULES_SERVICE_NAME = "rules"
+
 
 # Docker compose constants
 TEMP_FILES_PATH = "api/files/temp"
 MONITORING_FILES_PATH = "api/files/monitoring"
+RULES_FILES_PATH = "api/files/rules"
 REMOVE_TEMP_FILES = False

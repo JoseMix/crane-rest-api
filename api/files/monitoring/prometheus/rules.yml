@@ -45,3 +45,30 @@ groups:
         annotations:
           summary: "High request count for Traefik"
           description: "The request count for Traefik entrypoint is consistently high."
+
+      - alert: high_error_rate
+        expr: increase(traefik_entrypoint_requests_total{code=~"5.."}[1m]) / increase(traefik_entrypoint_requests_total[1m]) > 0.01
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High error rate for Traefik"
+          description: "The error rate for Traefik entrypoint is consistently high."
+
+      - alert: high_request_duration
+        expr: increase(traefik_service_request_duration_seconds_sum[1m]) / increase(traefik_service_request_duration_seconds_count[1m]) > 1
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High request duration for Traefik"
+          description: "The request duration for Traefik service is consistently high."
+
+      - alert: high_open_connections
+        expr: traefik_entrypoint_open_connections > 100
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High open connections for Traefik"
+          description: "The open connections for Traefik entrypoint is consistently high."

@@ -1,9 +1,7 @@
 from opa_client.opa import OpaClient
-from api.db.models import OPAConfig, OPAStatic
 from fastapi import HTTPException
+from api.config.constants import OPA_SERVER_URL
 import os
-
-OPA_SERVER_URL = "http://localhost:8181"
 
 
 def get_opa_client():
@@ -28,16 +26,14 @@ def get_policies():
 
 def update_or_create_opa_data(data, name):
     """
-    Print and create a policy.
+    Update or create data in OPA server.    
     """
     opa_client = get_opa_client()
     opa_client.update_or_create_opa_data(data, name)
     return True
 
 
-
 def check_policy(policy_name, rule_name, input_data):
-    print(policy_name, rule_name, input_data)
     """
     Check a given policy with provided input data.
     """
@@ -46,7 +42,6 @@ def check_policy(policy_name, rule_name, input_data):
     response = opa_client.check_permission(
         input_data=input_data, policy_name=policy_name, rule_name=rule_name
     )
-    print(response)
     if 'result' in response:
         return response
     raise HTTPException(status_code=404, detail="Policy decision not found")
@@ -54,7 +49,7 @@ def check_policy(policy_name, rule_name, input_data):
 
 def create_opa_policy(policy_content, policy_name):
     """
-    Print and create a policy.
+    Create a new policy in OPA.
     """
     opa_client = get_opa_client()
     return opa_client.update_opa_policy_fromstring(policy_content, policy_name)
@@ -66,6 +61,22 @@ def update_policy(policy_status, policy_content):
     """
     opa_client = get_opa_client()
     return opa_client.update_opa_policy_fromstring(policy_content, policy_status)
+
+
+def update_policies_file(name, path, force=False):
+    """
+    Update the policies file.
+    """
+    if force:
+        delete_all_policies()
+    client = get_opa_client()
+    client.update_opa_policy_fromfile(path, endpoint=name)  # response is True
+    policies = client.get_policies_list()
+    if name in policies:
+        return True
+    raise HTTPException(
+        status_code=404, detail="The policy was not saved in the OPA server. Please check the file and try again. Also, make sure the OPA server is running."
+    )
 
 
 def delete_opa_policy(policy_name):
@@ -85,71 +96,3 @@ def delete_all_policies():
     for policy in policies_list:
         opa_client.delete_opa_policy(policy)
     return "All policies deleted successfully!"
-
-
-def test(db, opaConfig):
-    """
-    Test functionality to create a policy, update it, and check access.
-    """
-    # Delete all policies from OPA
-    # delete_all_policies()
-
-    # Create the configuration in the database
-    # Assuming 'create_config' is a function you already have
-    # config = create_config(db, opaConfig)
-
-    # Load the policy content from the given path
-    # path = os.path.abspath("api/config/policy.rego")
-
-    """ with open(path) as policy_file:
-        policy_content = policy_file.read() """
-
-    # Update the policy in OPA with the loaded content
-    # update_policy(config.policy_status, policy_content)
-
-    # Verify access for a user
-    print(check_policy(config.policy_status,
-          'allow', {"input": {"role": "admin"}}))
-    print(check_policy(config.policy_status,
-          'allow', {"input": {"role": "user"}}))
-
-    return config
-
-
-def update_policies_file(db):
-    configs = db.query(OPAConfig.policy_status, OPAConfig.policy).all()
-    static_config = db.query(OPAStatic.package, OPAStatic.default_status).all()
-    write_policies(configs, static_config)
-
-
-def write_policies(policies, static_config):
-    rego_path = os.path.abspath("api/config/policy.rego")
-    try:
-        with open(rego_path, 'w') as file:
-            for default_status, package in static_config:
-                file.write(default_status+"\n\n")
-                file.write(package+"\n\n")
-            for policy_status, policy_item in policies:
-                policy = policy_item
-                file.write(policy_status+"\n\n")
-                file.write(policy + "\n\n")
-    except Exception as error:
-        print(f"An error occurred while writing the file: {str(error)}")
-
-
-def get_configs_from_db(db):
-    configs = db.query(OPAConfig).all()
-    configs.opa_policy = get_policies()
-    if configs:
-        return configs
-    raise HTTPException(
-        status_code=404, detail="Configurations not found in the database"
-    )
-
-
-def create_config(db, opaConfig):
-    config = OPAConfig(**opaConfig.dict())
-    db.add(config)
-    db.commit()
-    db.refresh(config)
-    return config

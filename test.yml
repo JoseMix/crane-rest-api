@@ -1,0 +1,16 @@
+config:
+  target: "http://appnueva-b9811f52-whoami.docker.localhost"
+  port: 32769
+  phases:
+    - duration: 1
+      arrivalRate: 1
+  http:
+    extendedMetrics: true
+  plugins:
+    metrics-by-endpoint: {}
+scenarios:
+  - name: "Retrieve data"
+    flow:
+      - get:
+          url: "/"
+          afterResponse: "printStatus"

@@ -69,5 +69,4 @@ def remove_user(db: Session, user_id: int, role_id: int):
 
 
 def get_roles_by_user(db: Session, db_user: models.User):
-    # obtener roles del usuario y ademas hacer join con la tabla de roles para obtener el nombre del rol
     return db.query(models.Role).join(models.UserRole).filter(models.UserRole.user_id == db_user.id).all()
