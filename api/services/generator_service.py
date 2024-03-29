@@ -22,7 +22,6 @@ def docker_compose_generator(app: App):
     if not proxy:
         return JSONResponse(status_code=400, content={"message": "Wrong proxy config detected", "proxy": proxy})
 
-    # first: add the proxy config to yaml
     yaml_obj = [
         {
             "version": '3',
@@ -76,7 +75,7 @@ def docker_compose_remove(app_name: str):
         return "App not removed because REMOVE_TEMP_FILES is False"
 
 
-def prometheus_yaml_generator():
+def prometheus_yaml_generator(force=False):
     yaml_obj = [
         {
 
@@ -120,8 +119,10 @@ def prometheus_yaml_generator():
             ]
         }
     ]
+    if not force:
+        if os.path.exists(f"{os.getcwd()}/{MONITORING_FILES_PATH}/prometheus/{PROMETHEUS_FILE}"):
+            return "Prometheus file already exists"
 
-    # third: write the yaml file
     os.makedirs(
         f'{os.getcwd()}/{MONITORING_FILES_PATH}/prometheus',
         exist_ok=True
@@ -153,7 +154,10 @@ def prometheus_scrape_generator(app: App):
             })
             file.close()
         else:
-            return JSONResponse(status_code=400, content={"message": "App already exists"})
+            search[0]['static_configs'][0]['targets'] = [
+                f"{app.ip}:{TARGET_PORT}"]
+            file.close()
+
     with open(f"{MONITORING_FILES_PATH}/prometheus/{PROMETHEUS_FILE}", "w") as file2:
         yaml.dump(file_data, file2)
         file2.close()

@@ -68,7 +68,14 @@ async def logs(app_id: str, db_user=Depends(verify_jwt), db: Session = Depends(g
     logs = await CraneService.logs(db, app_id, db_user)
     return logs
 
+
 @appRouter.post("/{app_id}/stats", tags=["app"], description="Get stats for app")
 async def stats(app_id: str, db_user=Depends(verify_jwt), db: Session = Depends(get_db)):
     stats = await CraneService.stats(db, app_id, db_user)
     return stats
+
+
+@appRouter.post("/refresh", tags=["app"], description="Refresh apps")
+async def refresh(db_user=Depends(verify_jwt), db: Session = Depends(get_db)):
+    apps = await CraneService.refresh_apps_scrapes(db, db_user)
+    return apps

@@ -5,7 +5,7 @@ from api.schemas.app import App
 import api.services.monitoring_service as MonitoringService
 from api.db.database import get_db
 from api.routes.auth_routes import verify_jwt
-
+from api.services.alert_service import processAlert
 monitoringRouter = APIRouter()
 
 
@@ -29,5 +29,4 @@ async def restart(db_user=Depends(verify_jwt)):
 
 @monitoringRouter.post("/alert", tags=["app"], description="Alert an app")
 async def alert(data: Dict[Any, Any]):
-    print(data)
-    return " ***************-----------  alert ----------------****************"
+    return await processAlert(data)

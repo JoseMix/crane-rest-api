@@ -12,6 +12,7 @@ from api.config.constants import *
 async def start_monitoring():
     try:
         # create network
+        prometheus_yaml_generator()
         docker = await DockerClient.get_client(MONITORING_SERVICE_NAME)
         networks = docker.network.list()
         search = [network for network in networks if network.name ==
@@ -20,7 +21,6 @@ async def start_monitoring():
             docker.network.create(PROMETHEUS_NETWORK_NAME,
                                   driver=PROMETHEUS_NETWORK_DRIVER)
         docker.compose.up(detach=True)
-        prometheus_yaml_generator()
         return {"message": "Monitoring started successfully"}
     except Exception as e:
         raise HTTPException(

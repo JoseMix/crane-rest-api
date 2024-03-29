@@ -80,6 +80,26 @@ async def create(db: Session, app: App, db_user):
     return db_app
 
 
+async def refresh_apps_scrapes(db: Session, db_user):
+    apps = AppCrud.get_all(db, db_user)
+    for app in apps:
+        app.services = json.loads(app.services)
+        app = {k: v for k, v in app.__dict__.items() if v is not None}
+        app = AppDocker(**app)
+        docker_compose_generator(app)
+        docker = await DockerClient.get_client(app.name)
+        containers = docker.ps(filters={"name": app.name})
+        search = [container for container in containers if container.name.startswith(
+            app.name + "-traefik")]
+        app.ip = search[0].network_settings.networks[PROMETHEUS_NETWORK_NAME].ip_address
+        app.port = search[0].network_settings.ports['80/tcp'][0]['HostPort']
+        app.ports = search[0].network_settings.ports
+        AppCrud.update(db, db_user, app.id, app)
+        prometheus_scrape_generator(app)
+    await restart_monitoring()
+    return {"message": "Apps refreshed"}
+
+
 async def start(db: Session, app_id: str, db_user):
     app = await get_app_with_docker(db, db_user, app_id)
     app.docker.compose.build()

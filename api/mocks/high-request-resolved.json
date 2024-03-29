@@ -1,0 +1,48 @@
+{
+  "receiver": "post-api",
+  "status": "resolved",
+  "alerts": [
+    {
+      "status": "resolved",
+      "labels": {
+        "alertname": "high_request_count",
+        "code": "200",
+        "entrypoint": "web",
+        "instance": "172.30.0.6:8080",
+        "job": "pruebaapi-b9c45d5c",
+        "method": "GET",
+        "monitor": "crane-monitor",
+        "protocol": "http",
+        "severity": "warning"
+      },
+      "annotations": {
+        "description": "The request count for Traefik entrypoint is consistently high.",
+        "summary": "High request count for Traefik"
+      },
+      "startsAt": "2024-03-29T16:36:39.764Z",
+      "endsAt": "2024-03-29T16:39:39.764Z",
+      "generatorURL": "http://1decdadef3a5:9090/graph?g0.expr=increase%28traefik_entrypoint_requests_total%5B1m%5D%29+%3E+100&g0.tab=1",
+      "fingerprint": "f41eb1f31a6402e7"
+    }
+  ],
+  "groupLabels": { "alertname": "high_request_count" },
+  "commonLabels": {
+    "alertname": "high_request_count",
+    "code": "200",
+    "entrypoint": "web",
+    "instance": "172.30.0.6:8080",
+    "job": "pruebaapi-b9c45d5c",
+    "method": "GET",
+    "monitor": "crane-monitor",
+    "protocol": "http",
+    "severity": "warning"
+  },
+  "commonAnnotations": {
+    "description": "The request count for Traefik entrypoint is consistently high.",
+    "summary": "High request count for Traefik"
+  },
+  "externalURL": "http://729ede61a51c:9093",
+  "version": "4",
+  "groupKey": "{}:{alertname=\"high_request_count\"}",
+  "truncatedAlerts": 0
+}
