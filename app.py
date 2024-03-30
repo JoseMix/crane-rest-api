@@ -13,7 +13,7 @@ from api.routes.rule_routes import ruleRouter
 from api.config.constants import API_PREFIX, OPA_RBAC_CONFIG_NAME, OPA_RBAC_CONFIG_FILE
 from api.clients.OPAClient import update_policies_file
 from api.services.rule_service import start_rules
-from api.services.monitoring_service import restart_monitoring
+from api.services.monitoring_service import start_monitoring
 
 dictConfig(LogConfig().dict())
 load_dotenv()
@@ -28,7 +28,7 @@ if not docker_running():
 @app.on_event("startup")
 async def startup_event():
     await start_rules()
-    await restart_monitoring()
+    await start_monitoring()
     update_policies_file(OPA_RBAC_CONFIG_NAME, OPA_RBAC_CONFIG_FILE, True) 
 
 
