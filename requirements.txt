@@ -7,8 +7,10 @@ passlib==1.7.4
 pyaml==21.10.1
 pydantic==2.2.1
 pyjwt==2.8.0
+pypiwin32==223; platform_system == "Windows"
 python-dotenv==1.0.0
 python-on-whales==0.68.0
+pywin32==306; platform_system == "Windows"
 PyYAML==6.0.1
 requests==2.27.1
 starlette==0.27.0

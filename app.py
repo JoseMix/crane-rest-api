@@ -28,8 +28,12 @@ if not docker_running():
 @app.on_event("startup")
 async def startup_event():
     await start_rules()
+<<<<<<< Updated upstream
     await start_monitoring()
+=======
+>>>>>>> Stashed changes
     update_policies_file(OPA_RBAC_CONFIG_NAME, OPA_RBAC_CONFIG_FILE, True) 
+    await restart_monitoring()
 
 
 router = APIRouter()

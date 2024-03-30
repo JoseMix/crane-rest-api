@@ -20,7 +20,7 @@ scrape_configs:
   scrape_interval: 5s
   static_configs:
   - targets:
-    - 172.28.0.4:8080
+    - 172.30.0.6:8080
 - job_name: pruebaapi-efb299b7
   scrape_interval: 5s
   static_configs:
@@ -30,4 +30,4 @@ scrape_configs:
   scrape_interval: 5s
   static_configs:
   - targets:
-    - 172.28.0.6:8080
+    - 172.30.0.4:8080

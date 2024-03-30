@@ -8,6 +8,7 @@ uvicorn app:app --reload
 
 Metricas de Prometheus:
 traefik_entrypoint_requests_total
+traefik_entrypoint_requests_duration_seconds
 
 Endpoint de Prometheus:
 http://localhost:9090/
@@ -18,3 +19,4 @@ http://localhost:9093/
 
 Test de carga con artillery:
 artillery quick -k --count 10 -n 20 http://appnueva-b9811f52-whoami.docker.localhost:32769
+
