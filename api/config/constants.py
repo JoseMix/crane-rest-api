@@ -31,7 +31,9 @@ TARGET_PORT = "8080"
 
 # OPA constants
 OPA_RBAC_CONFIG_NAME = "rbac"
-OPA_RBAC_CONFIG_FILE = "api/files/rules/policies/rbac.rego"
+OPA_RBAC_CONFIG_FILE = "api/files/rules/policy/rbac.rego"
+OPA_ALERT_RULES_CONFIG_NAME = "alert_rules"
+OPA_ALERT_RULES_CONFIG_FILE = "api/files/rules/policy/alert.json"
 OPA_SERVER_URL = "http://localhost:8181"
 OPA_RBAC_RULE_NAME = "allow"
 RULES_SERVICE_NAME = "rules"

@@ -1,6 +1,7 @@
+''' This file contains the schema for the app model. '''
 from typing import Optional
-from pydantic import BaseModel
 from datetime import datetime
+from pydantic import BaseModel
 
 
 class App(BaseModel):
@@ -12,12 +13,14 @@ class App(BaseModel):
     command: Optional[str] = None
     volumes: Optional[list] = None
     labels: Optional[list] = None
-    scale: Optional[int] = None
+    min_scale: Optional[int] = None
+    current_scale: Optional[int] = None
+    max_scale: Optional[int] = None
+    force_stop: Optional[bool] = None
     image: Optional[str] = None
     network: Optional[str] = None
     ip: Optional[str] = None
     port: Optional[str] = None
-    count: Optional[int] = None
     environment: Optional[str] = None
     status: Optional[str] = None
     created_at: Optional[datetime] = None

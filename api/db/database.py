@@ -1,3 +1,4 @@
+''' This file is used to create a database connection and session for the FastAPI application. '''
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -14,6 +15,7 @@ Base = declarative_base()
 
 
 async def get_db():
+    ''' Get database session '''
     db = SessionLocal()
     try:
         yield db

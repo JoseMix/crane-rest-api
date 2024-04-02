@@ -11,13 +11,15 @@ class App(BaseModel):
     ports: dict
     volumes: list
     labels: list
-    scale: int
+    min_scale: int
+    current_scale: int
+    max_scale: int
+    force_stop: bool
     image: str
     network: str
     hosts: list
     ip: str
     port: str
-    count: int
     environment: str
     status: str
     created_at: str
@@ -36,13 +38,15 @@ class AppCreate(App):
     ports: Optional[dict] = None
     volumes: Optional[list] = None
     labels: Optional[list] = None
-    scale: Optional[int] = None
+    min_scale: Optional[int] = None
+    current_scale: Optional[int] = None
+    max_scale: Optional[int] = None
+    force_stop: Optional[bool] = None
     image: Optional[str] = None
     network: Optional[str] = None
     hosts: Optional[list] = None
     ip: Optional[str] = None
     port: Optional[str] = None
-    count: Optional[int] = None
     environment: Optional[str] = None
     status: Optional[str] = None
     created_at: Optional[datetime] = None
@@ -88,21 +92,6 @@ class UserLogin(BaseModel):
     password: str
 
 
-class OPAConfigBase(BaseModel):
-    id: Optional[int]
-    name: str
-    threshold: int
-    policy_status: str
-    policy: str
-
-
-class OPAConfigCreate(BaseModel):
-    name: str
-    threshold: int
-    policy_status: str
-    policy: str
-
-
 class OPAPolicyCreate(BaseModel):
     policy_name: str
     policy_content: str
@@ -117,17 +106,6 @@ class OPAPolicyCheck(BaseModel):
     policy_name: str
     rule_name: str
     input_data: Any
-
-
-class OPAConfigUpdate(OPAConfigBase):
-    pass
-
-
-class OPAConfigInDB(OPAConfigBase):
-    id: int
-
-    class Config:
-        from_attributes = True
 
 
 class Role(BaseModel):

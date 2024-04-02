@@ -1,5 +1,7 @@
+'''This file contains the schema for the container model'''
 from typing import Optional
 from pydantic import BaseModel
+
 
 class Container (BaseModel):
     id: Optional[str]
@@ -12,7 +14,3 @@ class Container (BaseModel):
     volumes: Optional[str]
     environment: Optional[str]
     labels: Optional[str]
-
-  
-
-

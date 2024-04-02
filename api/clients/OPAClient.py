@@ -1,7 +1,5 @@
 from opa_client.opa import OpaClient
 from fastapi import HTTPException
-from api.config.constants import OPA_SERVER_URL
-import os
 
 
 def get_opa_client():
@@ -22,6 +20,14 @@ def get_policies():
     """
     opa_client = get_opa_client()
     return opa_client.get_policies_list()
+
+
+def get_opa_raw_data(name):
+    """
+    Fetch raw data from OPA server.
+    """
+    opa_client = get_opa_client()
+    return opa_client.get_opa_raw_data(name)
 
 
 def update_or_create_opa_data(data, name):

@@ -1,52 +1,72 @@
-from glob import glob
-from python_on_whales import DockerClient, docker
-from pathlib import Path
-import subprocess
+import logging
 import platform
+import subprocess
+from glob import glob
+from pathlib import Path
+from python_on_whales import DockerClient, docker
 from api.config.constants import TEMP_FILES_PATH, MONITORING_FILES_PATH, RULES_FILES_PATH
 
 
-def is_docker_daemon_running():
-    try:
-        subprocess.check_output("docker ps".split())
-        return True
-    except subprocess.CalledProcessError:
-        return False
+def verify_docker_daemon():
+    ''' Verify if Docker daemon is running '''
+    os_type = platform.system()
 
+    if os_type == "Windows":
+        # Windows: use `docker version` to check if Docker is running
+        try:
+            output = subprocess.check_output(
+                ["docker", "version"], stderr=subprocess.STDOUT
+            ).decode()
+            if "Server:" in output:
+                return True
+        except subprocess.CalledProcessError:
+            return False
 
-def start_docker_daemon():
-    if platform.system() == "Linux":
-        command = "service docker start"
-    elif platform.system() == "Windows":
-        return "Error: Docker daemon cannot be started automatically on Windows. Please start it manually."
+    elif os_type == "Darwin":
+        # MacOS: use `docker info` to check if Docker is running
+        try:
+            subprocess.check_output("docker info", shell=True)
+            return True
+        except subprocess.CalledProcessError:
+            return False
+
     else:
-        return "Error: Unsupported platform. Please start Docker daemon manually."
+        # Linux: use `docker info` to check if Docker is running
+        try:
+            subprocess.check_output("docker info", shell=True)
+            return True
+        except subprocess.CalledProcessError:
+            return False
 
-    try:
-        subprocess.check_output(command.split())
-        return True
-    except subprocess.CalledProcessError:
+    return False
+
+
+def docker_running():
+    ''' Check if Docker is running '''
+    logger = logging.getLogger("api-log")
+
+    if not verify_docker_daemon():
+        logger.error("Detectamos que Docker no está corriendo en este sistema")
+        logger.error(
+            "Por favor, inicie el servicio de Docker para que Crane funcione correctamente."
+        )
         return False
+    return True
 
 
 async def get_client(project_name):
-    if not is_docker_daemon_running():
-        result = start_docker_daemon()
-        if result != True:
-            raise Exception(result)
+    ''' Get Docker client '''
 
-    if (project_name == 'all'):
+    paths = {
+        'monitoring': MONITORING_FILES_PATH,
+        'rules': RULES_FILES_PATH,
+        'default': f'{TEMP_FILES_PATH}/{project_name}'
+    }
+
+    if project_name == 'GLOBAL':
         return docker
-    elif (project_name == 'monitoring'):
-        client = DockerClient(compose_files=glob(
-            f'{Path.cwd()}/{MONITORING_FILES_PATH}/*.yml')
-        )
-    elif (project_name == 'rules'):
-        client = DockerClient(compose_files=glob(
-            f'{Path.cwd()}/{RULES_FILES_PATH}/*.yml')
-        )
-    else:
-        client = DockerClient(compose_files=glob(
-            f'{Path.cwd()}/{TEMP_FILES_PATH}/{project_name}/*.yml')
-        )
+
+    path = paths.get(project_name, paths['default'])
+    client = DockerClient(compose_files=glob(f'{Path.cwd()}/{path}/*.yml'))
+
     return client

@@ -16,18 +16,8 @@ scrape_configs:
   static_configs:
   - targets:
     - localhost:9090
-- job_name: pruebaapi-6abb87f6
+- job_name: pruebaapi-7c1a9a47
   scrape_interval: 5s
   static_configs:
   - targets:
-    - 172.30.0.6:8080
-- job_name: pruebaapi-efb299b7
-  scrape_interval: 5s
-  static_configs:
-  - targets:
-    - 172.28.0.5:8080
-- job_name: pruebaapi-b9c45d5c
-  scrape_interval: 5s
-  static_configs:
-  - targets:
-    - 172.30.0.4:8080
+    - 172.24.0.3:8080

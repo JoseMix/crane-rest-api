@@ -1,3 +1,4 @@
+''' This module contains the configuration for the logger to be used in the server. '''
 from pydantic import BaseModel
 
 

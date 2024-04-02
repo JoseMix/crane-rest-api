@@ -1,24 +1,27 @@
-import json
-import os
-from sqlalchemy.orm import Session
-from .. import models, schemas
+''' This module contains the CRUD operations for the User model. '''
 from passlib.hash import pbkdf2_sha256
+from sqlalchemy.orm import Session
 from api.config.constants import SECRET_KEY
+from api.db import models, schemas
 
 
 def get_all(db: Session, skip: int = 0, limit: int = 100):
+    ''' Get all users '''
     return db.query(models.User).offset(skip).limit(limit).all()
 
 
 def get_by_id(db: Session, user_id: int):
+    ''' Get user by ID '''
     return db.query(models.User).filter(models.User.id == user_id).first()
 
 
 def get_by_email(db: Session, email: str):
+    ''' Get user by email '''
     return db.query(models.User).filter(models.User.email == email.strip()).first()
 
 
 def register(db: Session, user: schemas.UserCreate):
+    ''' Register a new user '''
     hashed_password = pbkdf2_sha256.hash(user.password, salt=SECRET_KEY)
     db_user = models.User(
         email=user.email,
@@ -32,32 +35,9 @@ def register(db: Session, user: schemas.UserCreate):
 
 
 def login(db: Session, user: schemas.UserLogin):
+    ''' Login to get an authentication token '''
     db_user = get_by_email(db, user.email)
     if db_user:
         if pbkdf2_sha256.verify(user.password, db_user.password):
             return db_user
     return None
-
-
-def add_user(db: Session, role_id: int, user_id: int):
-    db_user_role = models.UserRole(
-        role_id=role_id,
-        user_id=user_id
-    )
-    db.add(db_user_role)
-    db.commit()
-    db.refresh(db_user_role)
-    return db_user_role
-
-
-def remove_user(db: Session, role_id: int, user_id: int):
-    db_user_role = db.query(models.UserRole).filter(
-        models.UserRole.role_id == role_id,
-        models.UserRole.user_id == user_id
-    ).first()
-    if not db_user_role:
-        return None
-
-    db.delete(db_user_role)
-    db.commit()
-    return db_user_role

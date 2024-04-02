@@ -1,39 +1,37 @@
-import json
-from typing import List
+''' Service to manage Open Policy Agent service '''
 from fastapi import HTTPException
-from api.schemas.app import App
 from api.clients import DockerClient
-from sqlalchemy.orm import Session
-from api.services.generator_service import docker_compose_generator, docker_compose_remove
-import api.db.crud.app_crud as AppCrud
 from api.config.constants import RULES_SERVICE_NAME
 
 
 async def start_rules():
+    ''' Start Open Policy Agent service '''
     try:
         docker = await DockerClient.get_client(RULES_SERVICE_NAME)
         docker.compose.up(detach=True)
         return {"message": "Rules started successfully"}
     except Exception as e:
         raise HTTPException(
-            status_code=500, detail=f"Error starting rules. {e}")
+            status_code=500, detail=f"Error starting rules. {e}") from e
 
 
 async def stop_rules():
+    ''' Stop Open Policy Agent service '''
     try:
         docker = await DockerClient.get_client(RULES_SERVICE_NAME)
         docker.compose.stop()
         return {"message": "Rules stopped successfully"}
     except Exception as e:
         raise HTTPException(
-            status_code=500, detail="Error stopping rules. Please check if the rules service is running")
+            status_code=500, detail="Error stopping rules. Please check if the rules service is running") from e
 
 
 async def restart_rules():
+    ''' Restart Open Policy Agent service '''
     try:
         docker = await DockerClient.get_client(RULES_SERVICE_NAME)
         docker.compose.restart()
         return {"message": "Rules restarted successfully"}
     except Exception as e:
         raise HTTPException(
-            status_code=500, detail=f"Error restarting rules. Please check if the rules service is running. ")
+            status_code=500, detail="Error restarting rules. Please check if the rules service is running") from e

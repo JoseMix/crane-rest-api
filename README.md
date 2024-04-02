@@ -20,3 +20,6 @@ http://localhost:9093/
 Test de carga con artillery:
 artillery quick -k --count 10 -n 20 http://appnueva-b9811f52-whoami.docker.localhost:32769
 
+
+
+revisar lint

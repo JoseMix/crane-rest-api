@@ -1,42 +1,42 @@
-import asyncio
+''' Main application file '''
+import json
+from logging.config import dictConfig
 from dotenv import load_dotenv
 from fastapi import FastAPI, APIRouter
-from logging.config import dictConfig
 from api.config.logger import LogConfig
-from api.utils.docker import docker_running
+from api.clients.DockerClient import docker_running
 from api.routes.opa_routes import opaConfigRouter
 from api.routes.auth_routes import authRouter
 from api.routes.apps_routes import appRouter
 from api.routes.role_routes import roleRouter
 from api.routes.monitoring_routes import monitoringRouter
 from api.routes.rule_routes import ruleRouter
-from api.config.constants import API_PREFIX, OPA_RBAC_CONFIG_NAME, OPA_RBAC_CONFIG_FILE
-from api.clients.OPAClient import update_policies_file
+from api.config.constants import API_PREFIX, OPA_RBAC_CONFIG_NAME, OPA_RBAC_CONFIG_FILE, OPA_ALERT_RULES_CONFIG_NAME, OPA_ALERT_RULES_CONFIG_FILE
+from api.clients.OPAClient import update_policies_file, update_or_create_opa_data
 from api.services.rule_service import start_rules
 from api.services.monitoring_service import start_monitoring
 
 dictConfig(LogConfig().dict())
+
 load_dotenv()
 app = FastAPI()
 
-
-# Verify Docker daemon is running
+''' Check if docker is running '''
 if not docker_running():
     exit(0)
 
 
 @app.on_event("startup")
 async def startup_event():
+    ''' Start basic services on startup '''
     await start_rules()
-<<<<<<< Updated upstream
     await start_monitoring()
-=======
->>>>>>> Stashed changes
-    update_policies_file(OPA_RBAC_CONFIG_NAME, OPA_RBAC_CONFIG_FILE, True) 
-    await restart_monitoring()
-
+    update_policies_file(OPA_RBAC_CONFIG_NAME, OPA_RBAC_CONFIG_FILE, True)
+    data = json.load(open(OPA_ALERT_RULES_CONFIG_FILE, encoding='utf-8'))
+    update_or_create_opa_data(data, OPA_ALERT_RULES_CONFIG_NAME)
 
 router = APIRouter()
+
 router.include_router(authRouter, prefix="/v1/auth")
 router.include_router(ruleRouter, prefix="/v1/rules")
 router.include_router(monitoringRouter, prefix="/v1/monitoring")

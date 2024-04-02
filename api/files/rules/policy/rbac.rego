@@ -19,7 +19,8 @@ role_permissions := {
         {"action": "GET",  "object": "MONITORING"},
         {"action": "POST",  "object": "MONITORING"},
         {"action": "PATCH",  "object": "MONITORING"},
-        {"action": "DELETE",  "object": "MONITORING"}
+        {"action": "DELETE",  "object": "MONITORING"},
+        {"action": "GET",  "object": "RULES"},
     ],
     "USER":  [{"action": "GET",  "object": "APPS"}],
 }

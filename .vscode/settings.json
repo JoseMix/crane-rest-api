@@ -1,6 +1,19 @@
 {
-  "cSpell.words": ["fastapi"],
-  "python.analysis.extraPaths": ["./clients"],
+  "cSpell.words": [
+    "accesslog",
+    "alertmanager",
+    "alertmanagers",
+    "alertname",
+    "autoflush",
+    "dotenv",
+    "fastapi",
+    "levelprefix",
+    "pydantic",
+    "sessionmaker",
+    "sqlalchemy",
+    "traefik",
+    "uvicorn"
+  ],
   "files.exclude": {
     "**/__pycache__": true,
     "sql_app.db": true
@@ -8,5 +21,9 @@
   "cSpell.enableFiletypes": [
     "!markdown",
     "!plaintext"
-  ]
+  ],
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.autopep8",
+    "editor.formatOnSave": true
+  }
 }

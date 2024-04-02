@@ -1,22 +1,22 @@
 import json
 from datetime import datetime
 from sqlalchemy.orm import Session
-from sqlalchemy import and_
-from .. import models, schemas
+from sqlalchemy import and_, or_
+from api.db import models, schemas
 from passlib.hash import pbkdf2_sha256
 from api.config.constants import SECRET_KEY
 
 
-def get_by_name(db: Session, db_user: models.User, name: str):
-    return db.query(models.App).filter(models.App.name == name.strip()).filter(models.App.user_id == db_user.id).first()
+def get_by_name(db: Session, name: str, user_id: int = None):
+    return db.query(models.App).filter(and_(models.App.name == name, models.App.deleted_at == None)).filter(or_(models.App.user_id == user_id, user_id is None)).first()
 
 
-def get_by_id(db: Session, db_user: models.User, id: int):
-    return db.query(models.App).filter(and_(models.App.id == id, models.App.user_id == db_user.id)).first()
+def get_by_id(db: Session, id: int, user_id: int = None):
+    return db.query(models.App).filter(and_(models.App.id == id, models.App.deleted_at == None)).filter(or_(models.App.user_id == user_id, user_id is None)).first()
 
 
-def get_all(db: Session, db_user: models.User, skip: int = 0, limit: int = 100):
-    return db.query(models.App).filter(models.App.user_id == db_user.id).offset(skip).limit(limit).all()
+def get_all(db: Session, user_id: int = None, skip: int = 0, limit: int = 100):
+    return db.query(models.App).filter(or_(models.App.user_id == user_id, user_id is None)).filter(models.App.deleted_at == None).offset(skip).limit(limit).all()
 
 
 def create(db: Session, userApp: schemas.AppCreate):
@@ -30,8 +30,8 @@ def create(db: Session, userApp: schemas.AppCreate):
     return db_app
 
 
-def update(db: Session, db_user, app_id: str, app: schemas.App):
-    db_app = get_by_id(db, db_user, app_id)
+def update(db: Session, app_id: str, app: schemas.App, user_id: int = None):
+    db_app = get_by_id(db, app_id, user_id)
     update_data = app.dict(exclude_unset=True)
     update_data["services"] = json.dumps(update_data["services"])
     update_data["ports"] = json.dumps(update_data["ports"])
@@ -43,15 +43,15 @@ def update(db: Session, db_user, app_id: str, app: schemas.App):
     return db_app
 
 
-def delete_logical(db: Session, db_user, app_id: str,):
-    db_app = get_by_id(db, db_user, app_id)
+def delete_logical(db: Session, app_id: str, user_id: int = None):
+    db_app = get_by_id(db, app_id, user_id)
     db_app.deleted_at = datetime.now()
     db.commit()
     return db_app
 
 
-def delete_physical(db: Session, db_user, app_id: str,):
-    db_app = get_by_name(db, db_user, app_id)
+def delete_physical(db: Session, app_id: str, user_id: int = None):
+    db_app = get_by_name(db, app_id, user_id)
     db.delete(db_app)
     db.commit()
     return db_app

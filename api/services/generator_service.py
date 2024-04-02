@@ -1,23 +1,29 @@
+''' This module contains the functions to generate the docker-compose.yml and prometheus.yml files. '''
 import os
-import yaml
 import shutil
 import copy
 from pathlib import Path
+import yaml
 from fastapi.responses import JSONResponse
-from api.config.proxy import getConfig
+from api.config.proxy import get_config
 from api.schemas.app import App
-from api.config.constants import *
+from api.config.constants import (TEMP_FILES_PATH, GLOBAL_SCRAPE_INTERVAL, GLOBAL_EVALUATION_INTERVAL,
+                                  EXTERNAL_LABELS_MONITOR, RULES_FILE, ALERT_MANAGER_SCHEME, ALERT_MANAGER_PORT,
+                                  PROMETHEUS_SCRAPE_INTERVAL, PROMETHEUS_PORT, TARGET_PORT, MONITORING_FILES_PATH,
+                                  PROMETHEUS_FILE, REMOVE_TEMP_FILES, PROMETHEUS_SCRAPE_JOB_NAME)
 
 
 def write_yaml(obj, path):
-    with open(path, "w") as file:
+    ''' Write yaml file '''
+    with open(path, "w", encoding="utf-8") as file:
         yaml.dump_all(obj, file)
 
 
 def docker_compose_generator(app: App):
-    app = copy.deepcopy(app)
+    ''' Generate docker-compose.yml file '''
 
-    proxy = getConfig(app.name)
+    app = copy.deepcopy(app)
+    proxy = get_config(app.name)
 
     if not proxy:
         return JSONResponse(status_code=400, content={"message": "Wrong proxy config detected", "proxy": proxy})
@@ -67,6 +73,7 @@ def docker_compose_generator(app: App):
 
 
 def docker_compose_remove(app_name: str):
+    ''' Remove docker-compose.yml file '''
     if REMOVE_TEMP_FILES:
         path = Path.cwd() / TEMP_FILES_PATH / app_name
         shutil.rmtree(path)
@@ -76,6 +83,7 @@ def docker_compose_remove(app_name: str):
 
 
 def prometheus_yaml_generator(force=False):
+    ''' Generate prometheus.yml file '''
     yaml_obj = [
         {
 
@@ -136,8 +144,9 @@ def prometheus_yaml_generator(force=False):
 
 
 def prometheus_scrape_generator(app: App):
-    with open(f"{MONITORING_FILES_PATH}/prometheus/{PROMETHEUS_FILE}", "r") as file:
-        file_data = yaml.safe_load(file)
+    ''' Generate prometheus.yml file '''
+    with open(f"{MONITORING_FILES_PATH}/prometheus/{PROMETHEUS_FILE}", "r", encoding="utf-8") as file_to_read:
+        file_data = yaml.safe_load(file_to_read)
         search = [scrape for scrape in file_data['scrape_configs']
                   if scrape['job_name'] == app.name]
         if not search:
@@ -152,27 +161,29 @@ def prometheus_scrape_generator(app: App):
                     }
                 ]
             })
-            file.close()
+            file_to_read.close()
         else:
             search[0]['static_configs'][0]['targets'] = [
-                f"{app.ip}:{TARGET_PORT}"]
-            file.close()
+                f"{app.ip}:{TARGET_PORT}"
+            ]
+            file_to_read.close()
 
-    with open(f"{MONITORING_FILES_PATH}/prometheus/{PROMETHEUS_FILE}", "w") as file2:
-        yaml.dump(file_data, file2)
-        file2.close()
+    with open(f"{MONITORING_FILES_PATH}/prometheus/{PROMETHEUS_FILE}", "w", encoding="utf-8") as file_to_write:
+        yaml.dump(file_data, file_to_write)
+        file_to_write.close()
 
     return file_data
 
 
 def prometheus_scrape_remove(app_name: str):
-    with open(f"{MONITORING_FILES_PATH}/prometheus/{PROMETHEUS_FILE}", "r") as file:
-        file_data = yaml.safe_load(file)
+    ''' Remove prometheus scrape config '''
+    with open(f"{MONITORING_FILES_PATH}/prometheus/{PROMETHEUS_FILE}", "r", encoding="utf-8") as file_to_read:
+        file_data = yaml.safe_load(file_to_read)
         file_data['scrape_configs'] = [
             scrape for scrape in file_data['scrape_configs'] if scrape['job_name'] != app_name]
-        file.close()
-    with open(f"{MONITORING_FILES_PATH}/prometheus/{PROMETHEUS_FILE}", "w") as file2:
-        yaml.dump(file_data, file2)
-        file2.close()
+        file_to_read.close()
+    with open(f"{MONITORING_FILES_PATH}/prometheus/{PROMETHEUS_FILE}", "w", encoding="utf-8") as file_to_write:
+        yaml.dump(file_data, file_to_write)
+        file_to_write.close()
 
     return file_data

@@ -1,3 +1,4 @@
+''' This file contains the schema for the alert notification. '''
 from typing import List, Optional
 from pydantic import BaseModel
 

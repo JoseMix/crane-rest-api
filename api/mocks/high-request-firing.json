@@ -1,9 +1,9 @@
 {
   "receiver": "post-api",
-  "status": "resolved",
+  "status": "firing",
   "alerts": [
     {
-      "status": "resolved",
+      "status": "firing",
       "labels": {
         "alertname": "high_request_count",
         "code": "200",
