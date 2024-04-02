@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, APIRouter
 from api.config.logger import LogConfig
 from api.clients.DockerClient import docker_running
-from api.routes.opa_routes import opaConfigRouter
 from api.routes.auth_routes import authRouter
 from api.routes.apps_routes import appRouter
 from api.routes.role_routes import roleRouter
@@ -41,7 +40,6 @@ router.include_router(authRouter, prefix="/v1/auth")
 router.include_router(ruleRouter, prefix="/v1/rules")
 router.include_router(monitoringRouter, prefix="/v1/monitoring")
 router.include_router(appRouter, prefix="/v1/apps")
-router.include_router(opaConfigRouter, prefix="/v1/opa")
 router.include_router(roleRouter, prefix="/v1/roles")
 
 app.include_router(router, prefix=API_PREFIX)
