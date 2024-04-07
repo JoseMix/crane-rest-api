@@ -11,7 +11,7 @@ appRouter = APIRouter()
 @appRouter.get("/", tags=["app"], description="Get all apps", response_model_exclude_none=True)
 async def get(db_user=Depends(verify_jwt), db: Session = Depends(get_db)):
     ''' Get all user apps '''
-    apps = await CraneService.get_all(db, db_user.id)
+    apps = await CraneService.get_apps_with_docker(db, db_user.id)
     return apps
 
 
@@ -85,8 +85,8 @@ async def stats(app_id: str, db_user=Depends(verify_jwt), db: Session = Depends(
     return app_stats
 
 
-@appRouter.post("/refresh", tags=["app"], description="Refresh apps")
-async def refresh(db_user=Depends(verify_jwt), db: Session = Depends(get_db)):
+@appRouter.post("/refresh", tags=["app"], description="Refresh apps", dependencies=[Depends(verify_jwt)])
+async def refresh(db: Session = Depends(get_db)):
     ''' Refresh apps scrapes on prometheus yaml and database '''
     apps = await CraneService.refresh_apps_scrapes(db)
     return apps

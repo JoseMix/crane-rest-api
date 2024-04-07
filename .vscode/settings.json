@@ -16,7 +16,7 @@
   ],
   "files.exclude": {
     "**/__pycache__": true,
-    "sql_app.db": true
+    "sql_app.db": false
   },
   "cSpell.enableFiletypes": [
     "!markdown",
@@ -25,5 +25,9 @@
   "[python]": {
     "editor.defaultFormatter": "ms-python.autopep8",
     "editor.formatOnSave": true
-  }
+  },
+  "autopep8.args": [
+    "--max-line-length",
+    "150"
+  ],
 }

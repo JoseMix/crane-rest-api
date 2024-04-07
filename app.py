@@ -14,6 +14,7 @@ from api.config.constants import API_PREFIX, OPA_RBAC_CONFIG_NAME, OPA_RBAC_CONF
 from api.clients.OPAClient import update_policies_file, update_or_create_opa_data
 from api.services.rule_service import start_rules
 from api.services.monitoring_service import start_monitoring
+from api.db.database import create_db_and_tables
 
 dictConfig(LogConfig().dict())
 
@@ -28,6 +29,7 @@ if not docker_running():
 @app.on_event("startup")
 async def startup_event():
     ''' Start basic services on startup '''
+    create_db_and_tables()
     await start_rules()
     await start_monitoring()
     update_policies_file(OPA_RBAC_CONFIG_NAME, OPA_RBAC_CONFIG_FILE, True)

@@ -55,8 +55,7 @@ def docker_compose_generator(app: App):
     for service in services:
         name = service.pop('name', None)
         labels = service.get('labels', [])
-        labels.extend(
-            [f"a.label.name={app.name}", f"traefik.http.routers.{app.name}.rule=Host(`{app.name}-{name}.docker.localhost`)"])
+        labels.extend([f"a.label.name={app.name}", f"traefik.http.routers.{app.name}.rule=Host(`{app.name}-{name}.docker.localhost`)"])
         app_hosts.append(f"{app.name}-{name}.docker.localhost")
         service['labels'] = labels
         yaml_obj[0]['services'][name] = service
@@ -143,29 +142,26 @@ def prometheus_yaml_generator(force=False):
     return yaml_obj
 
 
-def prometheus_scrape_generator(app: App):
+def prometheus_scrape_generator(app_name: str, app_ip: str):
     ''' Generate prometheus.yml file '''
     with open(f"{MONITORING_FILES_PATH}/prometheus/{PROMETHEUS_FILE}", "r", encoding="utf-8") as file_to_read:
         file_data = yaml.safe_load(file_to_read)
-        search = [scrape for scrape in file_data['scrape_configs']
-                  if scrape['job_name'] == app.name]
+        search = [scrape for scrape in file_data['scrape_configs'] if scrape['job_name'] == app_name]
         if not search:
             file_data['scrape_configs'].append({
-                "job_name": app.name,
+                "job_name": app_name,
                 "scrape_interval": PROMETHEUS_SCRAPE_INTERVAL,
                 "static_configs": [
                     {
                         "targets": [
-                            f"{app.ip}:{TARGET_PORT}"
+                            f"{app_ip}:{TARGET_PORT}"
                         ]
                     }
                 ]
             })
             file_to_read.close()
         else:
-            search[0]['static_configs'][0]['targets'] = [
-                f"{app.ip}:{TARGET_PORT}"
-            ]
+            search[0]['static_configs'][0]['targets'] = [f"{app_ip}:{TARGET_PORT}"]
             file_to_read.close()
 
     with open(f"{MONITORING_FILES_PATH}/prometheus/{PROMETHEUS_FILE}", "w", encoding="utf-8") as file_to_write:

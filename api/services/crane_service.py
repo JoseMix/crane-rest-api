@@ -4,7 +4,7 @@ import json
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 import api.db.crud.app_crud as AppCrud
-from api.schemas.app import App, AppDocker
+from api.schemas.app import App, AppDocker, ProxyRoute
 from api.clients import DockerClient
 from api.config.constants import PROMETHEUS_NETWORK_NAME
 from api.services.generator_service import docker_compose_generator, docker_compose_remove, prometheus_scrape_generator, prometheus_scrape_remove
@@ -16,8 +16,7 @@ async def create(db: Session, app: App, user_id: int):
     app.name = f"{app.name}-{uuid.uuid4().hex[:8]}"
     db_app = AppCrud.get_by_name(db, app.name, user_id)
     if db_app:
-        raise HTTPException(
-            status_code=400, detail="App with this name already exists")
+        raise HTTPException(status_code=400, detail="App with this name already exists")
 
     app.user_id = user_id
 
@@ -30,23 +29,21 @@ async def create(db: Session, app: App, user_id: int):
     docker.compose.build()
     docker.compose.up(detach=True)
 
-    # get traefik container ip and ports
-    traefik_ip, traefik_ports = await get_router_dir(app, docker)
-    app.ip = traefik_ip
-    app.port = traefik_ports['80/tcp'][0]['HostPort']
-    app.ports = traefik_ports
-    app.hosts = compose['hosts']
+    # get proxy container ip and ports
+    proxy_route = await get_router_dir(app.name, docker)
+    db_app.hosts = compose['hosts']
+    db_app.services = json.loads(db_app.services)
 
     # update app in db
-    AppCrud.update(db, db_app.id, app, user_id)
+    AppCrud.update(db, db_app)
 
     # create prometheus yaml file
-    prometheus_scrape_generator(app)
+    prometheus_scrape_generator(app.name, proxy_route.ip)
 
     # restart monitoring docker compose
     await restart_monitoring()
 
-    # por ultimo eliminar el docker compose temporal generado para la app
+    # remove temp files
     docker_compose_remove(app.name)
 
     # finally return app
@@ -72,7 +69,20 @@ async def scale(db: Session, app_id: str, count: int, user_id: int = None):
 
 async def update(db: Session, app_id: str, app: App, user_id: int):
     ''' Update app on db and docker compose '''
-    AppCrud.update(db, app_id, app, user_id)
+    db_app = await get_app_by_id(db, app_id, user_id)
+    db_app.services = app.services
+    db_app.command = app.command
+    db_app.volumes = app.volumes
+    db_app.labels = app.labels
+    db_app.min_scale = app.min_scale
+    db_app.current_scale = app.current_scale
+    db_app.max_scale = app.max_scale
+    db_app.force_stop = app.force_stop
+    db_app.image = app.image
+    db_app.network = app.network
+    db_app.hosts = app.hosts
+    db_app.environment = app.environment
+    AppCrud.update(db, db_app)
     return {"message": f"App {app.name} updated"}
 
 
@@ -124,17 +134,32 @@ async def get_app_by_id(db, app_id: int, user_id: int = None):
     if not app:
         raise HTTPException(status_code=404, detail="App not found")
     app.services = json.loads(app.services)
-    app = {k: v for k, v in app.__dict__.items() if v is not None}
+    app.hosts = json.loads(app.hosts)
     return app
 
 
 async def get_app_with_docker(db, app_id: int, user_id: int = None):
     ''' Get app by id with docker client '''
     app = await get_app_by_id(db, app_id, user_id)
-    app = AppDocker(**app)
+    app = AppDocker(**app.__dict__)
     docker_compose_generator(app)
     app.docker = await DockerClient.get_client(app.name)
     return app
+
+
+async def get_apps_with_docker(db, user_id: int = None, skip: int = 0, limit: int = 100):
+    ''' Get all apps with docker status info   '''
+    apps = await get_all(db, user_id, skip, limit)
+    docker_apps = []
+    for app in apps:
+        docker_app = AppDocker(**app.__dict__)
+        docker_compose_generator(docker_app)
+        proxy_route = await get_router_dir(docker_app.name, await DockerClient.get_client(docker_app.name))
+        docker_app.ip = proxy_route.ip
+        docker_app.ports = proxy_route.ports
+        docker_app.status = proxy_route.status
+        docker_apps.append(docker_app)
+    return docker_apps
 
 
 async def get_app_by_name(db, app_name: str, user_id: int):
@@ -153,39 +178,32 @@ async def get_all(db, user_id: int, skip: int = 0, limit: int = 100):
     for app in apps:
         app.services = json.loads(app.services)
         app.hosts = json.loads(app.hosts)
-        app.ports = json.loads(app.ports)
+
     return apps
 
 
-async def get_router_dir(app, docker):
-    ''' Get traefik container ip and ports '''
-    containers = docker.ps(filters={"name": app.name})
+async def get_router_dir(app_name: str, docker):
+    ''' Get proxy container ip and ports '''
+    containers = docker.ps(filters={"name": app_name})
     if not containers:
-        return None, None
-    traefik_container = [container for container in containers if container.name.startswith(
-        app.name + "-traefik")][0]
-    traefik_ip = traefik_container.network_settings.networks[PROMETHEUS_NETWORK_NAME].ip_address
-    traefik_ports = traefik_container.network_settings.ports
-    return traefik_ip, traefik_ports
+        return ProxyRoute(
+            ip=None,
+            ports=None,
+            status="Stopped"
+        )
+    proxy_container = [container for container in containers if container.name.startswith(app_name + "-traefik")][0]
+    return ProxyRoute(
+        ip=proxy_container.network_settings.networks[PROMETHEUS_NETWORK_NAME].ip_address,
+        ports=proxy_container.network_settings.ports,
+        status="Running"
+    )
 
 
 async def refresh_apps_scrapes(db: Session):
     ''' Refresh apps prometheus scrapes '''
-    apps = AppCrud.get_all(db, None)
+    apps = await get_apps_with_docker(db)
     for app in apps:
-        app.services = json.loads(app.services)
-        app = {k: v for k, v in app.__dict__.items() if v is not None}
-        app = AppDocker(**app)
-        compose = docker_compose_generator(app)
-        docker = await DockerClient.get_client(app.name)
-
-        traefik_ip, traefik_ports = await get_router_dir(app, docker)
-        app.ip = traefik_ip
-        app.port = traefik_ports['80/tcp'][0]['HostPort']
-        app.ports = traefik_ports
-        app.hosts = compose['hosts']
-        AppCrud.update(db, app.id, app)
-        prometheus_scrape_generator(app)
+        prometheus_scrape_generator(app.name, app.ip)
 
     await restart_monitoring()
     return {"message": "Apps refreshed"}

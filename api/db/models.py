@@ -1,7 +1,6 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime, func
-from sqlalchemy.orm import relationship
-from sqlalchemy.sql import func
 from datetime import datetime
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime
+from sqlalchemy.orm import relationship
 
 
 from .database import Base
@@ -50,7 +49,6 @@ class App(Base):
     name = Column(String, index=True)
     services = Column(String, index=True)
     command = Column(String, index=True)
-    ports = Column(String, index=True)
     volumes = Column(String, index=True)
     labels = Column(String, index=True)
     min_scale = Column(Integer, index=True, default=1)
@@ -59,11 +57,8 @@ class App(Base):
     image = Column(String, index=True)
     network = Column(String, index=True)
     hosts = Column(String, index=True)
-    ip = Column(String, index=True)
-    port = Column(String, index=True)
     force_stop = Column(Boolean, index=True, default=False)
     environment = Column(String, index=True)
-    status = Column(String, index=True)
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, onupdate=datetime.now)
     deleted_at = Column(String, index=True)

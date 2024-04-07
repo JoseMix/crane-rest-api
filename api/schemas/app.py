@@ -8,8 +8,7 @@ class App(BaseModel):
     id: Optional[int] = None
     name: str
     services: Optional[list]
-    ports: Optional[str] = None
-    hosts: Optional[str] = None
+    hosts: Optional[list] = None
     command: Optional[str] = None
     volumes: Optional[list] = None
     labels: Optional[list] = None
@@ -19,10 +18,7 @@ class App(BaseModel):
     force_stop: Optional[bool] = None
     image: Optional[str] = None
     network: Optional[str] = None
-    ip: Optional[str] = None
-    port: Optional[str] = None
     environment: Optional[str] = None
-    status: Optional[str] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
     deleted_at: Optional[datetime] = None
@@ -31,3 +27,12 @@ class App(BaseModel):
 
 class AppDocker(App):
     docker: Optional[list] = None
+    ip: Optional[str] = None
+    ports: Optional[dict] = None
+    status: Optional[str] = None
+
+
+class ProxyRoute(BaseModel):
+    ip: Optional[str] = None
+    ports: Optional[dict] = None
+    status: Optional[str] = None

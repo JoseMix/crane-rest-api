@@ -5,19 +5,22 @@ from sqlalchemy.orm import sessionmaker
 from api.config.constants import SQLITE_FILE
 
 
-engine = create_engine(
-    SQLITE_FILE, connect_args={"check_same_thread": False}
-)
+engine = create_engine(SQLITE_FILE, connect_args={"check_same_thread": False})
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
 
 
-async def get_db():
+def create_db_and_tables():
+    ''' Create database and tables '''
+    Base.metadata.create_all(bind=engine)
+
+
+def get_db():
     ''' Get database session '''
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+    with SessionLocal() as db:
+        try:
+            yield db
+        finally:
+            db.close()

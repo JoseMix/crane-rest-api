@@ -12,7 +12,7 @@ services:
     - --metrics.prometheus=true
     - --metrics.prometheus.buckets=0.1,0.3,1.2,5.0
     - --entrypoints.web.address=:80
-    - --providers.docker.constraints=Label(`a.label.name`, `pruebaapi-244939a9`)
+    - --providers.docker.constraints=Label(`a.label.name`, `pruebaapi-f636782c`)
     - --providers.docker.watch=true
     image: traefik:latest
     networks:
@@ -26,8 +26,8 @@ services:
   whoami:
     image: traefik/whoami
     labels:
-    - a.label.name=pruebaapi-244939a9
-    - traefik.http.routers.pruebaapi-244939a9.rule=Host(`pruebaapi-244939a9-whoami.docker.localhost`)
+    - a.label.name=pruebaapi-f636782c
+    - traefik.http.routers.pruebaapi-f636782c.rule=Host(`pruebaapi-f636782c-whoami.docker.localhost`)
     networks:
     - crane-net
 version: '3'
