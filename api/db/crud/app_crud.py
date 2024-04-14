@@ -7,6 +7,7 @@ from api.db import models, schemas
 
 def get_by_name(db: Session, name: str, user_id: int = None):
     ''' Get app by name '''
+
     return db.query(models.App).filter(and_(models.App.name == name, models.App.deleted_at == None)).filter(or_(models.App.user_id == user_id, user_id is None)).first()
 
 

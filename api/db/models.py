@@ -1,3 +1,4 @@
+''' This module defines the database models '''
 from datetime import datetime
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy.orm import relationship
@@ -7,6 +8,7 @@ from .database import Base
 
 
 class User(Base):
+    ''' This class defines the user model '''
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -22,6 +24,7 @@ class User(Base):
 
 
 class Role(Base):
+    ''' This class defines the role model '''
     __tablename__ = "roles"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -32,6 +35,7 @@ class Role(Base):
 
 
 class UserRole(Base):
+    ''' This class defines the user role model '''
     __tablename__ = "user_roles"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -43,22 +47,17 @@ class UserRole(Base):
 
 
 class App(Base):
+    ''' This class defines the app model '''
     __tablename__ = "apps"
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
     services = Column(String, index=True)
-    command = Column(String, index=True)
-    volumes = Column(String, index=True)
-    labels = Column(String, index=True)
     min_scale = Column(Integer, index=True, default=1)
     current_scale = Column(Integer, index=True, default=1)
     max_scale = Column(Integer, index=True, default=2)
-    image = Column(String, index=True)
-    network = Column(String, index=True)
     hosts = Column(String, index=True)
     force_stop = Column(Boolean, index=True, default=False)
-    environment = Column(String, index=True)
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, onupdate=datetime.now)
     deleted_at = Column(String, index=True)

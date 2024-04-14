@@ -30,8 +30,8 @@ if not docker_running():
 async def startup_event():
     ''' Start basic services on startup '''
     create_db_and_tables()
-    await start_rules()
-    await start_monitoring()
+    """ await start_rules()
+    await start_monitoring() """
     update_policies_file(OPA_RBAC_CONFIG_NAME, OPA_RBAC_CONFIG_FILE, True)
     data = json.load(open(OPA_ALERT_RULES_CONFIG_FILE, encoding='utf-8'))
     update_or_create_opa_data(data, OPA_ALERT_RULES_CONFIG_NAME)

@@ -1,4 +1,4 @@
-''' This module contains the functions to generate the docker-compose.yml and prometheus.yml files. '''
+''' This module contains the functions to CRUD the docker-compose and prometheus yaml files'''
 import os
 import shutil
 import copy

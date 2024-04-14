@@ -21,8 +21,9 @@ async def manage_alert(db: Session, data: Dict[Any, Any]):
         'result'][alert_name][status]
 
     for alert in alerts:
-        app_name = alert.labels.job
-        app = AppCrud.get_by_name(db, app_name, None)
+        alert_app_name = alert.labels.job
+        app_id = alert_app_name.split("-")[-1]
+        app = AppCrud.get_by_id(db, app_id, None)
         if not app:
             continue
         function_to_execute = globals()[function_name]

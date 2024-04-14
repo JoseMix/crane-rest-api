@@ -12,16 +12,18 @@ from api.services.monitoring_service import restart_monitoring
 
 
 async def create(db: Session, app: App, user_id: int):
-    ''' Create a new app '''
-    app.name = f"{app.name}-{uuid.uuid4().hex[:8]}"
-    db_app = AppCrud.get_by_name(db, app.name, user_id)
-    if db_app:
-        raise HTTPException(status_code=400, detail="App with this name already exists")
-
+    ''' 
+        This function creates a new app in the database, 
+        generates the docker-compose.yml file and starts the app. 
+    '''
+    # get user id
     app.user_id = user_id
 
     # create app in db
     db_app = AppCrud.create(db, app)
+
+    # generate app name with selected name and id
+    app.name = f"{db_app.name}-{db_app.id}"
 
     # create docker compose file and start app
     compose = docker_compose_generator(app)
@@ -71,17 +73,11 @@ async def update(db: Session, app_id: str, app: App, user_id: int):
     ''' Update app on db and docker compose '''
     db_app = await get_app_by_id(db, app_id, user_id)
     db_app.services = app.services
-    db_app.command = app.command
-    db_app.volumes = app.volumes
-    db_app.labels = app.labels
     db_app.min_scale = app.min_scale
     db_app.current_scale = app.current_scale
     db_app.max_scale = app.max_scale
     db_app.force_stop = app.force_stop
-    db_app.image = app.image
-    db_app.network = app.network
     db_app.hosts = app.hosts
-    db_app.environment = app.environment
     AppCrud.update(db, db_app)
     return {"message": f"App {app.name} updated"}
 
@@ -152,9 +148,10 @@ async def get_apps_with_docker(db, user_id: int = None, skip: int = 0, limit: in
     apps = await get_all(db, user_id, skip, limit)
     docker_apps = []
     for app in apps:
+        app_name = f"{app.name}-{app.id}"
         docker_app = AppDocker(**app.__dict__)
         docker_compose_generator(docker_app)
-        proxy_route = await get_router_dir(docker_app.name, await DockerClient.get_client(docker_app.name))
+        proxy_route = await get_router_dir(app_name, await DockerClient.get_client(app_name))
         docker_app.ip = proxy_route.ip
         docker_app.ports = proxy_route.ports
         docker_app.status = proxy_route.status

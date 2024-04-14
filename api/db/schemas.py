@@ -30,17 +30,11 @@ class App(BaseModel):
 class AppCreate(App):
     name: str
     services: list
-    command: Optional[str] = None
-    volumes: Optional[list] = None
-    labels: Optional[list] = None
     min_scale: Optional[int] = None
     current_scale: Optional[int] = None
     max_scale: Optional[int] = None
     force_stop: Optional[bool] = None
-    image: Optional[str] = None
-    network: Optional[str] = None
     hosts: Optional[list] = None
-    environment: Optional[str] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
     deleted_at: Optional[str] = None
