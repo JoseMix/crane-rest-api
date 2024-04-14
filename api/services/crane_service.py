@@ -1,5 +1,4 @@
 ''' This module contains the services for the crane app. '''
-import uuid
 import json
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
