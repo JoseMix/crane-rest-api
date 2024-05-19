@@ -1,25 +1,18 @@
 # CRANE: despliegue inteligente de contenedores
 
-Crane es una API de proposito general que permite desplegar imagenes de docker y simular una estructura cloud localmente, con el fin de probar aplicaciones en un entorno controlado.
-En esta api utilizamos la libreria de docker-py y python-on-whales para interactuar con el demonio de docker y desplegar contenedores.
+CRANE es una herramienta diseñada para el despliegue local de aplicaciones en contenedores, enfocada en simplificar las pruebas de entornos distribuidos de forma local. CRANE ofrece una solución liviana y de propósito general con capacidades de ruteo, escalado y monitoreo automático. Orientada a estudiantes, docentes y
+desarrolladores que necesiten crear y desplegar servicios en contenedores simulando las características básicas que ofrece un entorno cloud de plataforma como servicio (PaaS).
 
-conda activate crane-restapi
+## Requisitos
+pip install -r requirements.txt
 uvicorn app:app --reload
 
-Metricas de Prometheus:
-traefik_entrypoint_requests_total
-traefik_entrypoint_requests_duration_seconds
+# Endpoints de la API REST
+http://localhost:8000/docs
 
-Endpoint de Prometheus:
+# Endpoint de Prometheus:
 http://localhost:9090/
 
-Endpoint de AlertManager:
+# Endpoint de AlertManager:
 http://localhost:9093/
 
-
-Test de carga con artillery:
-artillery quick -k --count 10 -n 20 http://appnueva-b9811f52-whoami.docker.localhost:32769
-
-
-
-revisar lint
