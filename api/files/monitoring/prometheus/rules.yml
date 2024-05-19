@@ -3,7 +3,7 @@ groups:
     rules:
       - alert: service_down
         expr: up == 0
-        for: 30s
+        for: 5s
         labels:
           severity: page
         annotations:
@@ -12,7 +12,7 @@ groups:
 
       - alert: high_load
         expr: avg_over_time(node_load1[1m]) > 0.8
-        for: 30s
+        for: 10s
         labels:
           severity: page
         annotations:
@@ -38,8 +38,8 @@ groups:
           description: "Site Slow: {{$labels.instance}} for more than 30 seconds"
 
       - alert: high_request_count
-        expr: increase(traefik_entrypoint_requests_total[1m]) > 100
-        for: 1m
+        expr: increase(traefik_entrypoint_requests_total[10s]) > 100
+        for: 10s
         labels:
           severity: warning
         annotations:

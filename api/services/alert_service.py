@@ -3,7 +3,7 @@ from typing import Any, Dict
 import json
 from sqlalchemy.orm import Session
 from api.schemas.alert import AlertNotification
-from api.clients.OPAClient import get_opa_raw_data
+from api.clients.opa_client import get_opa_raw_data
 import api.db.crud.app_crud as AppCrud
 from api.config.constants import OPA_ALERT_RULES_CONFIG_NAME
 from api.services.crane_service import start, scale
@@ -38,7 +38,7 @@ async def start_app(db, app):
         await start(db, app.id)
 
 
-async def send_email():
+async def send_email(db, app):
     '''Send email to user'''
 
 

@@ -1,7 +1,7 @@
 route:
   group_by: [alertname]
   receiver: "post-api"
-  repeat_interval: 1m
+  repeat_interval: 5s
 
 receivers:
   - name: "post-api"

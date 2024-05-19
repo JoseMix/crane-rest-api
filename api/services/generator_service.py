@@ -30,7 +30,6 @@ def docker_compose_generator(app: App):
 
     yaml_obj = [
         {
-            "version": '3',
             "networks": {
                 "prometheus-net": {
                     "external": True

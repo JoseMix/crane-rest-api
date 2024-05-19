@@ -1,17 +1,18 @@
+''' Auth routes '''
 import jwt
 from fastapi import Depends, APIRouter, HTTPException, Header, Request
 from sqlalchemy.orm import Session
-from api.db import models, schemas
-from api.db.database import engine, get_db
+from api.db import schemas
+from api.db.database import get_db
 from api.config.constants import JWT_SECRET, JWT_ALGORITHM, JWT_EXPIRATION_TIME_MINUTES, OPA_RBAC_CONFIG_NAME, OPA_RBAC_RULE_NAME
 import api.db.crud.user_crud as UserRepository
 from api.db.crud.role_crud import get_roles_by_user
-from api.clients.OPAClient import check_policy
+from api.clients.opa_client import check_policy
 
 authRouter = APIRouter()
 
 
-@authRouter.post("/login", tags=["auth"], description="Login to get an authentication token")
+@authRouter.post("/login", tags=["Auth"], description="Login to get an authentication token")
 def login(user: schemas.UserLogin, db: Session = Depends(get_db)):
     ''' Login to get an authentication token '''
 
@@ -33,7 +34,7 @@ def login(user: schemas.UserLogin, db: Session = Depends(get_db)):
     return {"access_token":  access_token, "token_type": "bearer", "expires_in": JWT_EXPIRATION_TIME_MINUTES}
 
 
-@authRouter.post("/register", tags=["auth"], description="Register a new user")
+@authRouter.post("/register", tags=["Auth"], description="Register a new user")
 def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
     ''' Register a new user '''
 

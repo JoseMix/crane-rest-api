@@ -4,7 +4,7 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 import api.db.crud.app_crud as AppCrud
 from api.schemas.app import App, AppDocker, ProxyRoute
-from api.clients import DockerClient
+from api.clients.docker_client import get_docker_client
 from api.config.constants import PROMETHEUS_NETWORK_NAME
 from api.services.generator_service import docker_compose_generator, docker_compose_remove, prometheus_scrape_generator, prometheus_scrape_remove
 from api.services.monitoring_service import restart_monitoring
@@ -26,7 +26,7 @@ async def create(db: Session, app: App, user_id: int):
 
     # create docker compose file and start app
     compose = docker_compose_generator(app)
-    docker = await DockerClient.get_client(app.name)
+    docker = await get_docker_client(app.name)
     docker.compose.build()
     docker.compose.up(detach=True)
 
@@ -138,7 +138,7 @@ async def get_app_with_docker(db, app_id: int, user_id: int = None):
     app = await get_app_by_id(db, app_id, user_id)
     app = AppDocker(**app.__dict__)
     docker_compose_generator(app)
-    app.docker = await DockerClient.get_client(app.name)
+    app.docker = await get_docker_client(app.name + "-" + str(app.id))
     return app
 
 
@@ -150,7 +150,7 @@ async def get_apps_with_docker(db, user_id: int = None, skip: int = 0, limit: in
         app_name = f"{app.name}-{app.id}"
         docker_app = AppDocker(**app.__dict__)
         docker_compose_generator(docker_app)
-        proxy_route = await get_router_dir(app_name, await DockerClient.get_client(app_name))
+        proxy_route = await get_router_dir(app_name, await get_docker_client(app_name))
         docker_app.ip = proxy_route.ip
         docker_app.ports = proxy_route.ports
         docker_app.status = proxy_route.status

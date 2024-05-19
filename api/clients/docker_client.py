@@ -54,7 +54,7 @@ def docker_running():
     return True
 
 
-async def get_client(project_name):
+async def get_docker_client(project_name):
     ''' Get Docker client '''
 
     paths = {

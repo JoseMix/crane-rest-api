@@ -4,14 +4,14 @@ from logging.config import dictConfig
 from dotenv import load_dotenv
 from fastapi import FastAPI, APIRouter
 from api.config.logger import LogConfig
-from api.clients.DockerClient import docker_running
+from api.clients.docker_client import docker_running
 from api.routes.auth_routes import authRouter
 from api.routes.apps_routes import appRouter
 from api.routes.role_routes import roleRouter
 from api.routes.monitoring_routes import monitoringRouter
 from api.routes.rule_routes import ruleRouter
 from api.config.constants import API_PREFIX, OPA_RBAC_CONFIG_NAME, OPA_RBAC_CONFIG_FILE, OPA_ALERT_RULES_CONFIG_NAME, OPA_ALERT_RULES_CONFIG_FILE
-from api.clients.OPAClient import update_policies_file, update_or_create_opa_data
+from api.clients.opa_client import update_policies_file, update_or_create_opa_data
 from api.services.rule_service import start_rules
 from api.services.monitoring_service import start_monitoring
 from api.db.database import create_db_and_tables
@@ -30,8 +30,8 @@ if not docker_running():
 async def startup_event():
     ''' Start basic services on startup '''
     create_db_and_tables()
-    """ await start_rules()
-    await start_monitoring() """
+    await start_rules()
+    await start_monitoring()
     update_policies_file(OPA_RBAC_CONFIG_NAME, OPA_RBAC_CONFIG_FILE, True)
     data = json.load(open(OPA_ALERT_RULES_CONFIG_FILE, encoding='utf-8'))
     update_or_create_opa_data(data, OPA_ALERT_RULES_CONFIG_NAME)

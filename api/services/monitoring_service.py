@@ -1,6 +1,6 @@
 ''' This module contains the services for starting, stopping and restarting the monitoring services. '''
 from fastapi import HTTPException
-from api.clients import DockerClient
+from api.clients.docker_client import get_docker_client
 from api.services.generator_service import prometheus_yaml_generator
 from api.config.constants import MONITORING_SERVICE_NAME, PROMETHEUS_NETWORK_NAME, PROMETHEUS_NETWORK_DRIVER
 
@@ -9,7 +9,7 @@ async def start_monitoring():
     ''' Start Prometheus and Alert Manager services'''
     try:
         prometheus_yaml_generator()
-        docker = await DockerClient.get_client(MONITORING_SERVICE_NAME)
+        docker = await get_docker_client(MONITORING_SERVICE_NAME)
         networks = docker.network.list()
         search = [
             network for network in networks
@@ -30,7 +30,7 @@ async def start_monitoring():
 async def stop_monitoring():
     ''' Stop Prometheus and Alert Manager services '''
     try:
-        docker = await DockerClient.get_client(MONITORING_SERVICE_NAME)
+        docker = await get_docker_client(MONITORING_SERVICE_NAME)
         docker.compose.stop()
         return {"message": "Monitoring stopped successfully"}
     except Exception as e:
@@ -41,7 +41,7 @@ async def stop_monitoring():
 async def restart_monitoring():
     ''' Restart Prometheus and Alert Manager services '''
     try:
-        docker = await DockerClient.get_client(MONITORING_SERVICE_NAME)
+        docker = await get_docker_client(MONITORING_SERVICE_NAME)
         docker.compose.restart()
         return {"message": "Monitoring restarted successfully"}
     except Exception:

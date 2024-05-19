@@ -10,25 +10,21 @@ from api.services.alert_service import manage_alert
 monitoringRouter = APIRouter()
 
 
-@monitoringRouter.post("/", tags=["app"], description="Start Monitoring", response_model_exclude_none=True, dependencies=[Depends(verify_jwt)])
+@monitoringRouter.post("/", tags=["Monitoring"], description="Start Prometheus and Alert Manager services", response_model_exclude_none=True, dependencies=[Depends(verify_jwt)])
 async def start():
-    ''' Start Prometheus and Alert Manager services'''
     return await MonitoringService.start_monitoring()
 
 
-@ monitoringRouter.post("/stop", tags=["app"], description="Stop Monitoring", response_model_exclude_none=True, dependencies=[Depends(verify_jwt)])
+@monitoringRouter.post("/stop", tags=["Monitoring"], description="Stop Prometheus and Alert Manager services", response_model_exclude_none=True, dependencies=[Depends(verify_jwt)])
 async def stop():
-    ''' Stop Prometheus and Alert Manager services'''
     return await MonitoringService.stop_monitoring()
 
 
-@ monitoringRouter.post("/restart", tags=["app"], description="Restart Monitoring", response_model_exclude_none=True, dependencies=[Depends(verify_jwt)])
+@monitoringRouter.post("/restart", tags=["Monitoring"], description="Restart Prometheus and Alert Manager services", response_model_exclude_none=True, dependencies=[Depends(verify_jwt)])
 async def restart():
-    ''' Restart Prometheus and Alert Manager services'''
     return await MonitoringService.restart_monitoring()
 
 
-@ monitoringRouter.post("/alert", tags=["app"], description="Alert an app")
+@monitoringRouter.post("/alert", tags=["Monitoring"], description="Receive Alert Manager Webhook notification")
 async def alert(data: Dict[Any, Any], db: Session = Depends(get_db)):
-    ''' Receive Alert Manager Webhook notification '''
     return await manage_alert(db, data)
