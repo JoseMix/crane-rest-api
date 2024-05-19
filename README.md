@@ -1,15 +1,21 @@
 # CRANE: despliegue inteligente de contenedores
 
-Funciones de Crane:
-1 - Recibe una imagen de docker y la despliega en un contenedor.
-  - El contenedor debera tener una imagen de docker, que debera estar disponible en el repositorio de docker.
-  - Para esta imagen crane debera crear un enrutador en la misma red, que permita el auto-escalamiento y el acceso al contenedor.
-  - Por defecto se utilizara una politica de autoescalado para el contenedor.
-  - Crane devolvera los datos de acceso al servicio que hayamos desplegado
+CRANE es una herramienta diseñada para el despliegue local de aplicaciones en contenedores, enfocada en simplificar las pruebas de entornos distribuidos de forma local. CRANE ofrece una solución liviana y de propósito general con capacidades de ruteo, escalado y monitoreo automático. Orientada a estudiantes, docentes y
+desarrolladores que necesiten crear y desplegar servicios en contenedores simulando las características básicas que ofrece un entorno cloud de plataforma como servicio (PaaS).
 
-2 - Crane monitorea en segundo plano los contenedores que administra.
-  - Si el contenedor tiene demasiada carga la politica de auto escalamiento.
-  - Si un contenedor tiene una carga de transacciones muy baja se debera evaluar la politica de auto escalamiento.
-  - Si el contenedor tiene demasiado tiempo sin ser accedido se debera evaluar la politica de reciclaje.
-  - SI el contenedor tiene una falla se debera evaluar la politica de reintento.  
-  
+## Requisitos
+```
+pip install -r requirements.txt
+uvicorn app:app --reload
+```
+### Importante: El docker daemon debe estar iniciado, de lo contrario recibiremos una advertencia y el servidor no se iniciará.
+
+## Endpoints de la API REST
+```http://localhost:8000/docs```
+
+## Endpoint de Prometheus:
+```http://localhost:9090/```
+
+## Endpoint de AlertManager:
+```http://localhost:9093/```
+
