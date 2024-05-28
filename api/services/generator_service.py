@@ -70,10 +70,10 @@ def docker_compose_generator(app: App):
     }
 
 
-def docker_compose_remove(app_name: str):
+def docker_compose_remove(app_path_name: str):
     ''' Remove docker-compose.yml file '''
     if REMOVE_TEMP_FILES:
-        path = Path.cwd() / TEMP_FILES_PATH / app_name
+        path = Path.cwd() / TEMP_FILES_PATH / app_path_name
         shutil.rmtree(path)
         return "App removed"
     else:

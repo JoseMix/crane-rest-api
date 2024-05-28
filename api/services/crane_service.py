@@ -137,8 +137,9 @@ async def get_app_with_docker(db, app_id: int, user_id: int = None):
     ''' Get app by id with docker client '''
     app = await get_app_by_id(db, app_id, user_id)
     app = AppDocker(**app.__dict__)
+    app.name = app.name + "-" + str(app.id)
     docker_compose_generator(app)
-    app.docker = await get_docker_client(app.name + "-" + str(app.id))
+    app.docker = await get_docker_client(app.name)
     return app
 
 
@@ -150,7 +151,7 @@ async def get_apps_with_docker(db, user_id: int = None, skip: int = 0, limit: in
         app_name = f"{app.name}-{app.id}"
         docker_app = AppDocker(**app.__dict__)
         docker_compose_generator(docker_app)
-        proxy_route = await get_router_dir(app_name, await get_docker_client(app_name))
+        proxy_route = await get_router_dir(app_name, await get_docker_client(app.id))
         docker_app.ip = proxy_route.ip
         docker_app.ports = proxy_route.ports
         docker_app.status = proxy_route.status
@@ -199,7 +200,8 @@ async def refresh_apps_scrapes(db: Session):
     ''' Refresh apps prometheus scrapes '''
     apps = await get_apps_with_docker(db)
     for app in apps:
-        prometheus_scrape_generator(app.name, app.ip)
+        app_name = f"{app.name}-{app.id}"
+        prometheus_scrape_generator(app_name, app.ip)
 
     await restart_monitoring()
     return {"message": "Apps refreshed"}

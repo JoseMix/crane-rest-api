@@ -3,6 +3,8 @@
 CRANE es una herramienta diseñada para el despliegue local de aplicaciones en contenedores, enfocada en simplificar las pruebas de entornos distribuidos de forma local. CRANE ofrece una solución liviana y de propósito general con capacidades de ruteo, escalado y monitoreo automático. Orientada a estudiantes, docentes y
 desarrolladores que necesiten crear y desplegar servicios en contenedores simulando las características básicas que ofrece un entorno cloud de plataforma como servicio (PaaS).
 
+# Se encuentra a su disposición la coleccion de Postman en el repositorio
+
 ## Requisitos
 ```
 pip install -r requirements.txt
@@ -18,4 +20,5 @@ uvicorn app:app --reload
 
 ## Endpoint de AlertManager:
 ```http://localhost:9093/```
+
 
