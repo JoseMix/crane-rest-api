@@ -27,4 +27,5 @@ async def restart():
 
 @monitoringRouter.post("/alert", tags=["Monitoring"], description="Receive Alert Manager Webhook notification")
 async def alert(data: Dict[Any, Any], db: Session = Depends(get_db)):
+    print(data)
     return await manage_alert(db, data)
