@@ -6,16 +6,19 @@ desarrolladores que necesiten crear y desplegar servicios en contenedores simula
 # Se encuentra a su disposición la coleccion de Postman en el repositorio
 
 ## Requisitos
+```
 pip install -r requirements.txt
 uvicorn app:app --reload
+```
+### Importante: El docker daemon debe estar iniciado, de lo contrario recibiremos una advertencia y el servidor no se iniciará.
 
 ## Endpoints de la API REST
-http://localhost:8000/docs
+```http://localhost:8000/docs```
 
 ## Endpoint de Prometheus:
-http://localhost:9090/
+```http://localhost:9090/```
 
 ## Endpoint de AlertManager:
-http://localhost:9093/
+```http://localhost:9093/```
 
 
