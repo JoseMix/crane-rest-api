@@ -16,13 +16,8 @@ scrape_configs:
   static_configs:
   - targets:
     - localhost:9090
-- job_name: prueba_demo_crane_2024-2
+- job_name: prueba_demo_crane_2024-1
   scrape_interval: 5s
   static_configs:
   - targets:
     - 172.24.0.4:8080
-- job_name: prueba_demo_crane_2024-3
-  scrape_interval: 5s
-  static_configs:
-  - targets:
-    - 172.24.0.5:8080
