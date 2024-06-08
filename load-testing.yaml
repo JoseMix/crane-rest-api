@@ -1,5 +1,5 @@
 config:
-  target: http://prueba_demo_crane_2024-1-whoami.docker.localhost:32781
+  target: http://prueba_demo_crane_2024-1-whoami.docker.localhost:32841
   phases:
     - duration: 200
       arrivalRate: 100
